@@ -1,11 +1,8 @@
 package com.example.madodict
 
-import android.R.attr.letterSpacing
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,7 +59,7 @@ fun BootScreen() {
                 text = "魔法字典",
                 style = SplashTitleZh.copy(shadow = titleShadow),
                 color = LightTitleZh,
-                letterSpacing = 2.sp
+                letterSpacing = 6.sp
             )
             Text(
                 text = "Madoka Runes Dictionary",

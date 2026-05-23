@@ -3,7 +3,6 @@ package com.example.madodict
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,25 +12,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -70,7 +68,7 @@ fun DictionaryScreen(
 ) {
     Scaffold(
         bottomBar = {
-            DictionaryBottomBar(
+            BottomBar(
                 selectedTab = selectedTab,
                 onTabSelected = onTabSelected
             )
@@ -130,85 +128,16 @@ fun DictionaryScreen(
 }
 
 @Composable
-fun DictionaryBottomBar(
-    selectedTab: Int,
-    onTabSelected: (Int) -> Unit
-) {
-    data class BottomBarItem(
-        val label: String,
-        val iconRes: Int,
-        val index: Int,
-        val iconSize: Dp,
-        val padding: Dp
-    )
-
-    val items = listOf(
-        BottomBarItem("字典", R.drawable.soul_crystal_light_padding, 0, 40.dp, 0.dp),
-        BottomBarItem("转换", R.drawable.convert, 1, 30.dp, 0.dp),
-        BottomBarItem("设置", R.drawable.setting, 2, 30.dp, 0.dp)
-    )
-
-    NavigationBar(
-        modifier = Modifier.height(80.dp),
-        containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 0.dp
-    ) {
-        items.forEach { item ->
-            val isSelected = selectedTab == item.index
-            val contentColor = if (isSelected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(60.dp)
-                    .padding(horizontal = 33.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            Color.Transparent
-                        }
-                    )
-                    .clickable { onTabSelected(item.index) },
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    if(item.index != 0) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                    Icon(
-                        painter = painterResource(id = item.iconRes),
-                        contentDescription = item.label,
-                        modifier = Modifier.size(item.iconSize),
-                        tint = contentColor
-                    )
-                    if (item.index != 0) {
-                        Spacer(modifier = Modifier.height(5.dp))
-                    }
-                    Text(
-                        text = item.label,
-                        fontSize = 11.sp,
-                        color = contentColor
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun RuneTable(entries: List<RuneEntry>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(
-                elevation = 10.dp,
-                shape = RoundedCornerShape(36.dp),
+            .customShadow(
+                color = Color.Black.copy(alpha = 0.26f),
+                blurRadius = 6.dp,
+                offsetX = 0.dp,
+                offsetY = 0.dp,
+                cornerRadius = 36.dp
             )
             .border(
                 width = 3.5.dp,
@@ -217,7 +146,7 @@ fun RuneTable(entries: List<RuneEntry>) {
             )
             .clip(RoundedCornerShape(36.dp))
             .background(MaterialTheme.colorScheme.onPrimary)
-            .padding(20.dp)
+            .padding(18.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             RuneRow(
@@ -403,3 +332,34 @@ private val entireTable = listOf(
     RuneEntry("8", "8", "8", null, "8"),
     RuneEntry("9", "9", "9", null, "9")
 )
+
+private fun Modifier.customShadow(
+    color: Color,
+    blurRadius: Dp,
+    offsetX: Dp,
+    offsetY: Dp,
+    cornerRadius: Dp
+): Modifier = drawBehind {
+    val paint = Paint()
+    val frameworkPaint = paint.asFrameworkPaint()
+    frameworkPaint.isAntiAlias = true
+    frameworkPaint.color = android.graphics.Color.TRANSPARENT
+    frameworkPaint.setShadowLayer(
+        blurRadius.toPx(),
+        offsetX.toPx(),
+        offsetY.toPx(),
+        color.toArgb()
+    )
+
+    drawIntoCanvas { canvas ->
+        canvas.nativeCanvas.drawRoundRect(
+            0f,
+            0f,
+            size.width,
+            size.height,
+            cornerRadius.toPx(),
+            cornerRadius.toPx(),
+            frameworkPaint
+        )
+    }
+}
