@@ -50,13 +50,13 @@ fun BootScreen() {
         ) {
             Image(
                 painter = painterResource(id = R.drawable.main_kv_chara),
-                contentDescription = "boot screen character",
+                contentDescription = "boot screen mian visual",
                 modifier = Modifier.height(550.dp)
             )
             val titleShadow = Shadow(
                 color = Color.Black.copy(alpha = 0.35f),
-                offset = Offset(2f, 2f),
-                blurRadius = 3.5f
+                offset = Offset(3f, 3f),
+                blurRadius = 5f
             )
             Text(
                 text = "魔法字典",
@@ -65,7 +65,7 @@ fun BootScreen() {
                 letterSpacing = 2.sp
             )
             Text(
-                text = "Madoka runes dictionary",
+                text = "Madoka Runes Dictionary",
                 style = SplashTitleEn.copy(shadow = titleShadow),
                 color = LightTitleEn,
                 letterSpacing = 1.1.sp
@@ -77,7 +77,7 @@ fun BootScreen() {
                 .padding(bottom = 20.dp)
         ) {
             Text(
-                text = "This application follows the CC BY-NC 4.0 license",
+                text = "Version 0.0.1b / This application follows the CC BY-NC 4.0 license",
                 style = SplashFooter,
                 color = LightBottomText,
                 letterSpacing = 0.5.sp,
@@ -85,7 +85,7 @@ fun BootScreen() {
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = "and is open-sourced on https://github.com/Marguerite68/Mado_Dict",
+                text = "For learning and research purposes only",
                 style = SplashFooter,
                 color = LightBottomText,
                 letterSpacing = 0.5.sp,

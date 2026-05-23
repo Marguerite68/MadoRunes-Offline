@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import com.example.madodict.R
 
 private val Huitian = FontFamily(Font(R.font.huitian))
-private val HanKengGroteskLight = FontFamily(Font(R.font.hankengrotesk_light))
+private val HanKengGroteskRegular = FontFamily(Font(R.font.hankengrotesk_regular))
 private val FzLantingYuans = FontFamily(Font(R.font.fzlantingyuans_l_gb))
 private val MadokaArchaic = FontFamily(Font(R.font.madoka_archaic))
 private val MadokaModren = FontFamily(Font(R.font.madoka_modren))
@@ -27,13 +27,13 @@ val SplashTitleEn = TextStyle(
     fontSize = 15.sp
 )
 val SplashFooter = TextStyle(
-    fontFamily = HanKengGroteskLight,
+    fontFamily = HanKengGroteskRegular,
     fontWeight = FontWeight.Normal,
     fontSize = 6.sp
 )
 
 val PageTitle = TextStyle(
-    fontFamily = FzLantingYuans,
+    fontFamily = Huitian,
     fontWeight = FontWeight.Normal,
     fontSize = 30.sp
 )
@@ -78,7 +78,7 @@ val DropdownAndColorInputText = TextStyle(
     fontSize = 11.sp
 )
 val LanguageNameText = TextStyle(
-    fontFamily = HanKengGroteskLight,
+    fontFamily = HanKengGroteskRegular,
     fontWeight = FontWeight.Normal,
     fontSize = 12.sp
 )

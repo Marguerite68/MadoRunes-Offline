@@ -1,0 +1,405 @@
+package com.example.madodict
+
+import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.madodict.ui.theme.ContrastArchaicText
+import com.example.madodict.ui.theme.ContrastGothicText
+import com.example.madodict.ui.theme.ContrastHanLatinText
+import com.example.madodict.ui.theme.ContrastModrenText
+import com.example.madodict.ui.theme.ContrastMusicalText
+import com.example.madodict.ui.theme.PageBodyText
+import com.example.madodict.ui.theme.PageTitle
+import com.example.madodict.ui.theme.MadoDictTheme
+
+data class RuneEntry(
+    val latin: String?,
+    val ancient: String?,
+    val modern: String?,
+    val music: String?,
+    val gothic: String?
+)
+
+private val textStyleByColumnIndex = mapOf(
+    1 to ContrastArchaicText,
+    2 to ContrastModrenText,
+    3 to ContrastMusicalText,
+    4 to ContrastGothicText
+)
+
+
+@Composable
+fun DictionaryScreen(
+    runeEntries: List<RuneEntry>,
+    selectedTab: Int = 0,
+    onTabSelected: (Int) -> Unit = {}
+) {
+    Scaffold(
+        bottomBar = {
+            DictionaryBottomBar(
+                selectedTab = selectedTab,
+                onTabSelected = onTabSelected
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 30.dp, vertical = 50.dp)
+        ) {
+            Text(
+                text = "Dictionary",
+                style = PageTitle,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                letterSpacing = 3.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "魔女文字（英语：Madoka Runes，又称犬咖喱文）\n" +
+                        "是指出现于SHAFT制作的动画《魔法少女小圆》中魔女结界、\n" +
+                        "魔法少女戒指等处的文字，由剧团犬咖喱设计",
+                style = PageBodyText,
+                letterSpacing = 1.5.sp
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "魔女文字的字符与拉丁字母（包括德文字母，比英文字母多出4个)和阿拉伯数字之间存在一一对应",
+                style = PageBodyText,
+                letterSpacing = 1.5.sp
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "剧中出现的魔女文字大多用来拼写德文和英文，\n" +
+                        "也有用来拼写日语罗马字、意大利语、拉丁语等其他语言",
+                style = PageBodyText,
+                letterSpacing = 1.5.sp
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.Center) {
+                RuneTable(entries = runeEntries)
+            }
+        }
+    }
+}
+
+@Composable
+fun DictionaryBottomBar(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit
+) {
+    data class BottomBarItem(
+        val label: String,
+        val iconRes: Int,
+        val index: Int,
+        val iconSize: Dp,
+        val padding: Dp
+    )
+
+    val items = listOf(
+        BottomBarItem("字典", R.drawable.soul_crystal_light_padding, 0, 40.dp, 0.dp),
+        BottomBarItem("转换", R.drawable.convert, 1, 30.dp, 0.dp),
+        BottomBarItem("设置", R.drawable.setting, 2, 30.dp, 0.dp)
+    )
+
+    NavigationBar(
+        modifier = Modifier.height(80.dp),
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp
+    ) {
+        items.forEach { item ->
+            val isSelected = selectedTab == item.index
+            val contentColor = if (isSelected) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp)
+                    .padding(horizontal = 33.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (isSelected) {
+                            MaterialTheme.colorScheme.primaryContainer
+                        } else {
+                            Color.Transparent
+                        }
+                    )
+                    .clickable { onTabSelected(item.index) },
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if(item.index != 0) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    Icon(
+                        painter = painterResource(id = item.iconRes),
+                        contentDescription = item.label,
+                        modifier = Modifier.size(item.iconSize),
+                        tint = contentColor
+                    )
+                    if (item.index != 0) {
+                        Spacer(modifier = Modifier.height(5.dp))
+                    }
+                    Text(
+                        text = item.label,
+                        fontSize = 11.sp,
+                        color = contentColor
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RuneTable(entries: List<RuneEntry>) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(
+                elevation = 10.dp,
+                shape = RoundedCornerShape(36.dp),
+            )
+            .border(
+                width = 3.5.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(35.dp)
+            )
+            .clip(RoundedCornerShape(36.dp))
+            .background(MaterialTheme.colorScheme.onPrimary)
+            .padding(20.dp)
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            RuneRow(
+                cells = listOf("字体/\n字符", "古代体", "现代体", "音乐体", "哥特体"),
+                isHeader = true,
+                rowIndex = 0,
+                totalRows = entries.size + 1
+            )
+            entries.forEachIndexed { rowIndex, entry ->
+                RuneRow(
+                    cells = listOf(
+                        entry.latin,
+                        entry.ancient,
+                        entry.modern,
+                        entry.music,
+                        entry.gothic
+                    ),
+                    isHeader = false,
+                    rowIndex = rowIndex + 1,
+                    totalRows = entries.size + 1
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RuneRow(
+    cells: List<String?>,
+    isHeader: Boolean,
+    rowIndex: Int,
+    totalRows: Int
+) {
+    val columnWeights = listOf(0.205f, 0.205f, 0.205f, 0.205f, 0.205f)
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        cells.forEachIndexed { columnIndex, text ->
+            RuneCell(
+                text = text,
+                weight = columnWeights[columnIndex],
+                isLatinColumn = columnIndex == 0,
+                isHeader = isHeader,
+                columnIndex = columnIndex,
+                rowIndex = rowIndex,
+                totalRows = totalRows,
+                totalColumns = cells.size
+            )
+        }
+    }
+}
+
+@Composable
+fun RowScope.RuneCell(
+    text: String?,
+    weight: Float,
+    isLatinColumn: Boolean,
+    isHeader: Boolean,
+    columnIndex: Int,
+    rowIndex: Int,
+    totalRows: Int,
+    totalColumns: Int
+) {
+    val usesStressBackground = isHeader || isLatinColumn
+    val bgColor = if (usesStressBackground) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onPrimary
+    val cornerRadius = 20.dp
+    val shape = RoundedCornerShape(
+        topStart = if (rowIndex == 0 && columnIndex == 0) cornerRadius else 0.dp,
+        topEnd = if (rowIndex == 0 && columnIndex == totalColumns - 1) cornerRadius else 0.dp,
+        bottomStart = if (rowIndex == totalRows - 1 && columnIndex == 0) cornerRadius else 0.dp,
+        bottomEnd = if (rowIndex == totalRows - 1 && columnIndex == totalColumns - 1) cornerRadius else 0.dp
+    )
+
+    Box(
+        modifier = Modifier
+            .weight(weight)
+            .aspectRatio(1f)
+            .border(
+                width = 2.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = shape
+            )
+            .clip(shape)
+            .background(bgColor),
+        contentAlignment = Alignment.Center
+    ) {
+        val displayText = text ?: "/"
+        val textStyle = when {
+            text == null -> ContrastHanLatinText
+            isHeader -> ContrastHanLatinText
+            isLatinColumn -> ContrastHanLatinText
+            else -> textStyleByColumnIndex[columnIndex]
+                ?: ContrastArchaicText
+        }
+
+        Text(
+            text = displayText,
+            textAlign = TextAlign.Center,
+            style = textStyle,
+            modifier = Modifier.padding(2.dp)
+        )
+    }
+}
+
+@Composable
+@Preview(
+    name = "Light Mode",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+fun DictionaryScreenPreview() {
+    MadoDictTheme(darkTheme = false, dynamicColor = false) {
+        DictionaryScreen(runeEntries = sampleEntries)
+    }
+}
+
+@Composable
+@Preview(
+    name = "Dark Mode",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+fun DictionaryScreenDarkPreview() {
+    MadoDictTheme(darkTheme = true, dynamicColor = false) {
+        DictionaryScreen(runeEntries = sampleEntries)
+    }
+}
+
+private val sampleEntries = listOf(
+    RuneEntry("A", "A", "A", "A", "A"),
+    RuneEntry("B", "B", "B", "B", "B"),
+    RuneEntry("C", "C", "C", "C", "C"),
+    RuneEntry("D", "D", "D", "D", "D"),
+    RuneEntry("E", "E", "E", "E", "E"),
+    RuneEntry("F", "F", "F", "F", "F"),
+    RuneEntry("G", "G", "G", "G", "G"),
+    RuneEntry("H", "H", "H", "H", "H"),
+    RuneEntry("I", "I", "I", "I", "I"),
+    RuneEntry("J", "J", "J", null, "J")
+)
+
+private val entireTable = listOf(
+    RuneEntry("A", "A", "A", "A", "A"),
+    RuneEntry("B", "B", "B", "B", "B"),
+    RuneEntry("C", "C", "C", "C", "C"),
+    RuneEntry("D", "D", "D", "D", "D"),
+    RuneEntry("E", "E", "E", "E", "E"),
+    RuneEntry("F", "F", "F", "F", "F"),
+    RuneEntry("G", "G", "G", "G", "G"),
+    RuneEntry("H", "H", "H", "H", "H"),
+    RuneEntry("I", "I", "I", "I", "I"),
+    RuneEntry("J", "J", "J", "J", "J"),
+    RuneEntry("K", "K", "K", "K", "K"),
+    RuneEntry("L", "L", "L", "L", "L"),
+    RuneEntry("M", "M", "M", "M", "M"),
+    RuneEntry("N", "N", "N", "N", "N"),
+    RuneEntry("O", "O", "O", "O", "O"),
+    RuneEntry("P", "P", "P", "P", "P"),
+    RuneEntry("Q", "Q", "Q", null, "Q"),
+    RuneEntry("R", "R", "R", "R", "R"),
+    RuneEntry("S", "S", "S", "S", "S"),
+    RuneEntry("T", "T", "T", "T", "T"),
+    RuneEntry("U", "U", "U", "U", "U"),
+    RuneEntry("V", "V", null, "V", "V"),
+    RuneEntry("W", "W", "W", null, "W"),
+    RuneEntry("X", "X", null, null, "X"),
+    RuneEntry("Y", "Y", "Y", "Y", "Y"),
+    RuneEntry("Z", "Z", "Z", "Z", "Z"),
+    RuneEntry("Ä", "Ä", "Ä", null, "Ä"),
+    RuneEntry("Ö", "Ö", "Ö", null, "Ö"),
+    RuneEntry("Ü", "Ü", "Ü", null, "Ü"),
+    RuneEntry("ß", "ß", "ß", null, "ß"),
+    RuneEntry("0", "0", "0", null, "0"),
+    RuneEntry("1", "1", "1", null, "1"),
+    RuneEntry("2", "2", "2", null, "2"),
+    RuneEntry("3", "3", "3", null, "3"),
+    RuneEntry("4", "4", "4", null, "4"),
+    RuneEntry("5", "5", "5", null, "5"),
+    RuneEntry("6", "6", "6", null, "6"),
+    RuneEntry("7", "7", "7", null, "7"),
+    RuneEntry("8", "8", "8", null, "8"),
+    RuneEntry("9", "9", "9", null, "9")
+)
