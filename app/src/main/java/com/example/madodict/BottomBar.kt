@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun BottomBar(
     selectedTab: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
+    language: AppLanguage = AppLanguage.ZH
 ) {
     data class BottomBarItem(
         val label: String,
@@ -36,14 +38,34 @@ fun BottomBar(
         val padding: Dp
     )
 
+    val context = LocalContext.current
+
     val items = listOf(
-        BottomBarItem("字典", R.drawable.soul_crystal_light_padding, 0, 40.dp, 0.dp),
-        BottomBarItem("转换", R.drawable.convert, 1, 30.dp, 0.dp),
-        BottomBarItem("设置", R.drawable.setting, 2, 30.dp, 0.dp)
+        BottomBarItem(
+            appString(context, language, R.string.bottom_bar_dict),
+            R.drawable.soul_crystal_light_padding,
+            0,
+            40.dp,
+            0.dp
+        ),
+        BottomBarItem(
+            appString(context, language, R.string.bottom_bar_converter),
+            R.drawable.convert,
+            1,
+            30.dp,
+            0.dp
+        ),
+        BottomBarItem(
+            appString(context, language, R.string.bottom_bar_settings),
+            R.drawable.setting,
+            2,
+            30.dp,
+            0.dp
+        )
     )
 
     NavigationBar(
-        modifier = Modifier.height(80.dp),
+        modifier = Modifier.height(95.dp),
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp
     ) {

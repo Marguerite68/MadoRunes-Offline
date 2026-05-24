@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -64,64 +64,77 @@ private val textStyleByColumnIndex = mapOf(
 fun DictionaryScreen(
     runeEntries: List<RuneEntry>,
     selectedTab: Int = 0,
-    onTabSelected: (Int) -> Unit = {}
+    onTabSelected: (Int) -> Unit = {},
+    language: AppLanguage = AppLanguage.ZH
 ) {
     Scaffold(
         bottomBar = {
             BottomBar(
                 selectedTab = selectedTab,
-                onTabSelected = onTabSelected
+                onTabSelected = onTabSelected,
+                language = language
             )
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 30.dp, vertical = 50.dp)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(horizontal = 30.dp, vertical = 50.dp)
         ) {
-            Text(
-                text = "Dictionary",
-                style = PageTitle,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                letterSpacing = 3.sp
-            )
+            item {
+                Text(
+                    text = "Dictionary", //固定显示
+                    style = PageTitle,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 3.sp
+                )
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            item { Spacer(modifier = Modifier.height(16.dp)) }
 
-            Text(
-                text = "魔女文字（英语：Madoka Runes，又称犬咖喱文）\n" +
+            item {
+                Text(
+                    text = "魔女文字（英语：Madoka Runes，又称犬咖喱文）\n" +
                         "是指出现于SHAFT制作的动画《魔法少女小圆》中魔女结界、\n" +
                         "魔法少女戒指等处的文字，由剧团犬咖喱设计",
-                style = PageBodyText,
-                letterSpacing = 1.5.sp
-            )
+                    style = PageBodyText,
+                    letterSpacing = 1.5.sp
+                )
+            }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            item { Spacer(modifier = Modifier.height(12.dp)) }
 
-            Text(
-                text = "魔女文字的字符与拉丁字母（包括德文字母，比英文字母多出4个)和阿拉伯数字之间存在一一对应",
-                style = PageBodyText,
-                letterSpacing = 1.5.sp
-            )
+            item {
+                Text(
+                    text = "魔女文字的字符与拉丁字母（包括德文字母，比英文字母多出4个)和阿拉伯数字之间存在一一对应",
+                    style = PageBodyText,
+                    letterSpacing = 1.5.sp
+                )
+            }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            item { Spacer(modifier = Modifier.height(12.dp)) }
 
-            Text(
-                text = "剧中出现的魔女文字大多用来拼写德文和英文，\n" +
+            item {
+                Text(
+                    text = "剧中出现的魔女文字大多用来拼写德文和英文，\n" +
                         "也有用来拼写日语罗马字、意大利语、拉丁语等其他语言",
-                style = PageBodyText,
-                letterSpacing = 1.5.sp
-            )
+                    style = PageBodyText,
+                    letterSpacing = 1.5.sp
+                )
+            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            item { Spacer(modifier = Modifier.height(24.dp)) }
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.Center) {
-                RuneTable(entries = runeEntries)
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    RuneTable(entries = runeEntries)
+                }
             }
         }
     }
@@ -261,7 +274,7 @@ fun RowScope.RuneCell(
 )
 fun DictionaryScreenPreview() {
     MadoDictTheme(darkTheme = false, dynamicColor = false) {
-        DictionaryScreen(runeEntries = sampleEntries)
+        DictionaryScreen(runeEntries = defaultRuneEntries)
     }
 }
 
@@ -273,24 +286,11 @@ fun DictionaryScreenPreview() {
 )
 fun DictionaryScreenDarkPreview() {
     MadoDictTheme(darkTheme = true, dynamicColor = false) {
-        DictionaryScreen(runeEntries = sampleEntries)
+        DictionaryScreen(runeEntries = defaultRuneEntries)
     }
 }
 
-private val sampleEntries = listOf(
-    RuneEntry("A", "A", "A", "A", "A"),
-    RuneEntry("B", "B", "B", "B", "B"),
-    RuneEntry("C", "C", "C", "C", "C"),
-    RuneEntry("D", "D", "D", "D", "D"),
-    RuneEntry("E", "E", "E", "E", "E"),
-    RuneEntry("F", "F", "F", "F", "F"),
-    RuneEntry("G", "G", "G", "G", "G"),
-    RuneEntry("H", "H", "H", "H", "H"),
-    RuneEntry("I", "I", "I", "I", "I"),
-    RuneEntry("J", "J", "J", null, "J")
-)
-
-private val entireTable = listOf(
+val defaultRuneEntries = listOf(
     RuneEntry("A", "A", "A", "A", "A"),
     RuneEntry("B", "B", "B", "B", "B"),
     RuneEntry("C", "C", "C", "C", "C"),

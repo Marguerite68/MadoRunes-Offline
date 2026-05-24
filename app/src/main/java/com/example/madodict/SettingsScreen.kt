@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,19 +65,30 @@ import com.example.madodict.ui.theme.SettingLabelText
 
 @Composable
 fun SettingsScreen(
-    selectedTab: Int = 1,
+    selectedTab: Int = 2,
     onTabSelected: (Int) -> Unit = {},
     switchSelected: Boolean,
-    onThemeChange: (Boolean) -> Unit = {}
+    onThemeChange: (Boolean) -> Unit = {},
+    language: AppLanguage = AppLanguage.ZH,
+    onLanguageChange: (AppLanguage) -> Unit = {}
 ) {
     var isDarkTheme by remember { mutableStateOf(switchSelected) }
-    val radioOptions = listOf("中文", "English", "日本語")
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+    val languageOptions = listOf(
+        LanguageOption("中文", AppLanguage.ZH, true),
+        LanguageOption("English", AppLanguage.EN, true),
+        LanguageOption("日本語", null, false)
+    )
+    var selectedLanguage by remember { mutableStateOf(language) }
 
     LaunchedEffect(switchSelected) {
         isDarkTheme = switchSelected
     }
 
+    LaunchedEffect(language) {
+        selectedLanguage = language
+    }
+
+    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
     fun openUri(url: String) {
@@ -87,7 +99,8 @@ fun SettingsScreen(
         bottomBar = {
             BottomBar(
                 selectedTab = selectedTab,
-                onTabSelected = onTabSelected
+                onTabSelected = onTabSelected,
+                language = selectedLanguage
             )
         }
     ) { paddingValues ->
@@ -98,6 +111,7 @@ fun SettingsScreen(
                 .padding(horizontal = 30.dp, vertical = 50.dp)
         ) {
             Text(
+                //固定显示
                 text = "Settings",
                 style = PageTitle,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -113,12 +127,12 @@ fun SettingsScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.dark_mode),
-                    contentDescription = "Dark Mode Icon",
+                    contentDescription = appString(context, selectedLanguage, R.string.content_desc_dark_mode),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 Text(
-                    text = "深色模式",
+                    text = appString(context, selectedLanguage, R.string.settings_dark_mode),
                     style = SettingLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -142,12 +156,12 @@ fun SettingsScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.language_setting_icon),
-                    contentDescription = "Language Setting Icon",
+                    contentDescription = appString(context, selectedLanguage, R.string.content_desc_language_setting),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "语言/Language",
+                    text = "语言/Language",                    //固定显示
                     style = SettingLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -162,16 +176,21 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                radioOptions.forEach { option ->
+                languageOptions.forEach { option ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(end = 20.dp)
                             .then(
-                                if (option != "日本語") {
-                                    Modifier.clickable { onOptionSelected(option) }
+                                if (option.isEnabled) {
+                                    Modifier.clickable {
+                                        option.language?.let {
+                                            selectedLanguage = it
+                                            onLanguageChange(it)
+                                        }
+                                    }
                                 } else {
-                                    Modifier // 不添加 clickable，变为不可点击
+                                    Modifier
                                 }
                             )
                     ) {
@@ -181,7 +200,7 @@ fun SettingsScreen(
                                 .clip(CircleShape)
                                 .border(
                                     width = 2.dp,
-                                    color = if (option != "日本語") {
+                                    color = if (option.isEnabled) {
                                         MaterialTheme.colorScheme.onPrimaryContainer
                                     } else {
                                         MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
@@ -193,8 +212,7 @@ fun SettingsScreen(
                                     shape = CircleShape
                                 )
                         ) {
-                            // 选中时显示中间的小圆点
-                            if (selectedOption == option) {
+                            if (option.language != null && selectedLanguage == option.language) {
                                 Box(
                                     modifier = Modifier
                                         .size(9.dp)
@@ -208,9 +226,9 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.width(6.dp))
 
                         Text(
-                            text = option,
+                            text = option.label,
                             style = LanguageNameText,
-                            color = if (option != "日本語") {
+                            color = if (option.isEnabled) {
                                 MaterialTheme.colorScheme.onPrimaryContainer
                             } else {
                                 MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
@@ -234,13 +252,13 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.Info),
-                    contentDescription = "Info Icon",
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = appString(context, selectedLanguage, R.string.content_desc_info_icon),
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
                 )
                 Spacer(modifier = Modifier.width(13.dp))
                 Text(
-                    text = "关于",
+                    text = appString(context, selectedLanguage, R.string.settings_about),
                     style = SettingLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -254,13 +272,13 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "版本: v 0.0.1a",
+                    text = appString(context, selectedLanguage, R.string.settings_version_format, "v 0.0.1a"),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
                 )
                 Text(
-                    text = "创作者: Marguerite68",
+                    text = appString(context, selectedLanguage, R.string.settings_author_format, "Marguerite68"),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -269,13 +287,13 @@ fun SettingsScreen(
                 // Github 仓库 - 超链接
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "仓库: ",
+                        text = appString(context, selectedLanguage, R.string.settings_repo_label),
                         style = InfoAndBottomBarLabelText,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         letterSpacing = 1.5.sp
                     )
                     Text(
-                        text = "Github",
+                        text = appString(context, selectedLanguage, R.string.settings_repo_name),
                         style = InfoAndBottomBarLabelText.copy(
                             color = MaterialTheme.colorScheme.primary,
                             textDecoration = TextDecoration.Underline
@@ -286,21 +304,21 @@ fun SettingsScreen(
                     )
                 }
                 Text(
-                    text = "遵循CC BY-NC 4.0协议，严禁商用",
+                    text = appString(context, selectedLanguage, R.string.settings_license_notice),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "友情链接/参考：",
+                    text = appString(context, selectedLanguage, R.string.settings_links_header),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
                 )
                 // 魔女文网站
                 Text(
-                    text = "魔女文网站",
+                    text = appString(context, selectedLanguage, R.string.settings_link_madorunes),
                     style = InfoAndBottomBarLabelText.copy(
                         color = MaterialTheme.colorScheme.primary,
                         textDecoration = TextDecoration.Underline
@@ -312,7 +330,7 @@ fun SettingsScreen(
 
                 // 萌娘百科
                 Text(
-                    text = "萌娘百科",
+                    text = appString(context, selectedLanguage, R.string.settings_link_moegirl),
                     style = InfoAndBottomBarLabelText.copy(
                         color = MaterialTheme.colorScheme.primary,
                         textDecoration = TextDecoration.Underline
@@ -323,7 +341,7 @@ fun SettingsScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "项目贡献者：",
+                    text = appString(context, selectedLanguage, R.string.settings_contributors_header),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -332,6 +350,12 @@ fun SettingsScreen(
         }
     }
 }
+
+private data class LanguageOption(
+    val label: String,
+    val language: AppLanguage?,
+    val isEnabled: Boolean
+)
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable

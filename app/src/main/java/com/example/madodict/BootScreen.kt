@@ -32,7 +32,6 @@ fun BootScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
     ){
         Image(
             painter = painterResource(id = R.drawable.main_kv02_modified),
@@ -42,7 +41,8 @@ fun BootScreen() {
         )
         Column(
             modifier = Modifier
-                .fillMaxSize().padding(20.dp),
+                .fillMaxSize()
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -71,6 +71,7 @@ fun BootScreen() {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .fillMaxWidth()
                 .padding(bottom = 20.dp)
         ) {
             Text(
