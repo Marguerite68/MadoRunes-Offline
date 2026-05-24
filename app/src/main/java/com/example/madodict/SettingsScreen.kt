@@ -2,7 +2,6 @@ package com.example.madodict
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.provider.MediaStore
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,9 +21,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +44,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.sp
 
 import com.example.madodict.ui.theme.DarkOnPrimaryContainer
 import com.example.madodict.ui.theme.DarkSecondary
+import com.example.madodict.ui.theme.InfoAndBottomBarLabelText
 import com.example.madodict.ui.theme.LanguageNameText
 import com.example.madodict.ui.theme.LightBackground
 import com.example.madodict.ui.theme.LightSecondary
@@ -73,6 +75,12 @@ fun SettingsScreen(
 
     LaunchedEffect(switchSelected) {
         isDarkTheme = switchSelected
+    }
+
+    val uriHandler = LocalUriHandler.current
+
+    fun openUri(url: String) {
+        uriHandler.openUri(url)
     }
 
     Scaffold(
@@ -133,10 +141,10 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                painter = painterResource(id = R.drawable.language_setting_icon),
-                contentDescription = "Language Setting Icon",
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
-            )
+                    painter = painterResource(id = R.drawable.language_setting_icon),
+                    contentDescription = "Language Setting Icon",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "语言/Language",
@@ -159,7 +167,13 @@ fun SettingsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(end = 20.dp)
-                            .clickable { onOptionSelected(option) }
+                            .then(
+                                if (option != "English" && option != "Japanese" && option != "日本語") {
+                                    Modifier.clickable { onOptionSelected(option) }
+                                } else {
+                                    Modifier // 不添加 clickable，变为不可点击
+                                }
+                            )
                     ) {
                         Box(
                             modifier = Modifier
@@ -167,7 +181,11 @@ fun SettingsScreen(
                                 .clip(CircleShape)
                                 .border(
                                     width = 2.dp,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    color = if (option != "English" && option != "Japanese" && option != "日本語") {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
+                                    },
                                     shape = CircleShape
                                 )
                                 .background(
@@ -192,11 +210,124 @@ fun SettingsScreen(
                         Text(
                             text = option,
                             style = LanguageNameText,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            color = if (option != "English" && option != "Japanese" && option != "日本語") {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
+                            },
                             letterSpacing = 1.5.sp
                         )
                     }
                 }
+            }
+            Spacer(modifier = Modifier.height(5.dp))
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
+                thickness = 2.dp
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .fillMaxWidth()
+                    .height(50.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.Info),
+                    contentDescription = "Info Icon",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+                )
+                Spacer(modifier = Modifier.width(13.dp))
+                Text(
+                    text = "关于",
+                    style = SettingLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier = Modifier
+                    .padding(start = 84.dp, end = 20.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "版本: v 0.0.1a",
+                    style = InfoAndBottomBarLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
+                Text(
+                    text = "创作者: Marguerite68",
+                    style = InfoAndBottomBarLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
+
+                // Github 仓库 - 超链接
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "仓库: ",
+                        style = InfoAndBottomBarLabelText,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        letterSpacing = 1.5.sp
+                    )
+                    Text(
+                        text = "Github",
+                        style = InfoAndBottomBarLabelText.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline
+                        ),
+                        modifier = Modifier.clickable {
+                            openUri("https://github.com/Marguerite68/Mado_Dict")
+                        }
+                    )
+                }
+                Text(
+                    text = "遵循CC BY-NC 4.0协议，严禁商用",
+                    style = InfoAndBottomBarLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "友情链接/参考：",
+                    style = InfoAndBottomBarLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
+                // 魔女文网站
+                Text(
+                    text = "魔女文网站",
+                    style = InfoAndBottomBarLabelText.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    modifier = Modifier.clickable {
+                        openUri("https://www.madorunes.cn")
+                    }
+                )
+
+                // 萌娘百科
+                Text(
+                    text = "萌娘百科",
+                    style = InfoAndBottomBarLabelText.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    modifier = Modifier.clickable {
+                        openUri("https://zh.moegirl.org.cn/%E9%AD%94%E5%A5%B3%E6%96%87%E5%AD%97")
+                    }
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "项目贡献者：",
+                    style = InfoAndBottomBarLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
             }
         }
     }
