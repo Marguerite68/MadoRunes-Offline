@@ -19,4 +19,12 @@
     <string name="bottom_bar_settings">设置</string>
     <string name="settings_title">设置</string>
     <string name="settings_language_label">语言</string>
+    <string name="dict_intro_para1">魔女文字（英语：Madoka Runes，又称犬咖喱文）\n是指出现于SHAFT制作的动画《魔法少女小圆》中魔女结界、魔法少女戒指等处的文字，由剧团犬咖喱设计</string>
+    <string name="dict_intro_para2">魔女文字的字符与拉丁字母（包括德文字母，比英文字母多出4个)和阿拉伯数字之间存在一一对应</string>
+    <string name="dict_intro_para3">剧中出现的魔女文字大多用来拼写德文和英文，也有用来拼写日语罗马字、意大利语、拉丁语等其他语言</string>
+    <string name="column_and_row_name">字体/\n字符</string>
+    <string name="ancient_column_name">古代体</string>
+    <string name="modern_column_name">现代体</string>
+    <string name="musical_column_name">音乐体</string>
+    <string name="gothic_column_name">哥特体</string>
 </resources>

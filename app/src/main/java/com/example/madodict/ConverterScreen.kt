@@ -33,7 +33,7 @@ fun ConverterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 30.dp, vertical = 50.dp)
+                .padding(horizontal = 30.dp, vertical = 40.dp)
         ) {
             Text(
                 text = "Converter", //固定显示

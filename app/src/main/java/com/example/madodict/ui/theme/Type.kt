@@ -35,12 +35,12 @@ val SplashFooter = TextStyle(
 val PageTitle = TextStyle(
     fontFamily = Huitian,
     fontWeight = FontWeight.Normal,
-    fontSize = 30.sp
+    fontSize = 35.sp
 )
 val PageBodyText = TextStyle(
     fontFamily = FzLantingYuans,
     fontWeight = FontWeight.Normal,
-    fontSize = 10.sp
+    fontSize = 12.sp
 )
 val ContrastHanLatinText = TextStyle(
     fontFamily = FzLantingYuans,

@@ -108,7 +108,7 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 30.dp, vertical = 50.dp)
+                .padding(horizontal = 30.dp, vertical = 40.dp)
         ) {
             Text(
                 //固定显示
@@ -272,7 +272,7 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.settings_version_format, "v 0.0.1a"),
+                    text = appString(context, selectedLanguage, R.string.settings_version_format, "v 0.0.2a"),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -376,7 +376,7 @@ fun FixedThumbSwitch(
     val shadowColor = if (androidx.compose.foundation.isSystemInDarkTheme()) {
         Color.Black.copy(alpha = 0.5f)
     } else {
-        Color.Black.copy(alpha = 0.1f)
+        Color.Black.copy(alpha = 0.05f)
     }
 
     val offset by animateDpAsState(

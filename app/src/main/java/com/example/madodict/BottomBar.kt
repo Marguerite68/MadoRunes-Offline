@@ -20,9 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.madodict.ui.theme.InfoAndBottomBarLabelText
 
 @Composable
 fun BottomBar(
@@ -65,7 +67,7 @@ fun BottomBar(
     )
 
     NavigationBar(
-        modifier = Modifier.height(95.dp),
+        modifier = Modifier.height(110.dp),
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp
     ) {
@@ -80,8 +82,8 @@ fun BottomBar(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(60.dp)
-                    .padding(horizontal = 33.dp)
+                    .height(65.dp)
+                    .padding(horizontal = 28.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         if (isSelected) {
@@ -108,11 +110,21 @@ fun BottomBar(
                     }
                     Text(
                         text = item.label,
-                        fontSize = 11.sp,
+                        style = InfoAndBottomBarLabelText,
                         color = contentColor
                     )
                 }
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun BottomBarPreview() {
+    BottomBar(
+        selectedTab = 0,
+        onTabSelected = {},
+        language = AppLanguage.ZH
+    )
 }

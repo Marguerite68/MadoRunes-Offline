@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -67,6 +68,9 @@ fun DictionaryScreen(
     onTabSelected: (Int) -> Unit = {},
     language: AppLanguage = AppLanguage.ZH
 ) {
+
+    val context = LocalContext.current
+
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -80,7 +84,7 @@ fun DictionaryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentPadding = PaddingValues(horizontal = 30.dp, vertical = 50.dp)
+            contentPadding = PaddingValues(horizontal = 30.dp, vertical = 40.dp)
         ) {
             item {
                 Text(
@@ -95,9 +99,7 @@ fun DictionaryScreen(
 
             item {
                 Text(
-                    text = "魔女文字（英语：Madoka Runes，又称犬咖喱文）\n" +
-                        "是指出现于SHAFT制作的动画《魔法少女小圆》中魔女结界、\n" +
-                        "魔法少女戒指等处的文字，由剧团犬咖喱设计",
+                    text = appString(context, language, R.string.dict_intro_para1),
                     style = PageBodyText,
                     letterSpacing = 1.5.sp
                 )
@@ -107,7 +109,7 @@ fun DictionaryScreen(
 
             item {
                 Text(
-                    text = "魔女文字的字符与拉丁字母（包括德文字母，比英文字母多出4个)和阿拉伯数字之间存在一一对应",
+                    text = appString(context, language, R.string.dict_intro_para2),
                     style = PageBodyText,
                     letterSpacing = 1.5.sp
                 )
@@ -117,8 +119,7 @@ fun DictionaryScreen(
 
             item {
                 Text(
-                    text = "剧中出现的魔女文字大多用来拼写德文和英文，\n" +
-                        "也有用来拼写日语罗马字、意大利语、拉丁语等其他语言",
+                    text = appString(context, language, R.string.dict_intro_para3),
                     style = PageBodyText,
                     letterSpacing = 1.5.sp
                 )
@@ -133,7 +134,7 @@ fun DictionaryScreen(
                         .padding(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    RuneTable(entries = runeEntries)
+                    RuneTable(entries = runeEntries, language = language)
                 }
             }
         }
@@ -141,7 +142,11 @@ fun DictionaryScreen(
 }
 
 @Composable
-fun RuneTable(entries: List<RuneEntry>) {
+fun RuneTable(entries: List<RuneEntry>,
+              language: AppLanguage
+) {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,10 +168,15 @@ fun RuneTable(entries: List<RuneEntry>) {
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             RuneRow(
-                cells = listOf("字体/\n字符", "古代体", "现代体", "音乐体", "哥特体"),
+                cells = listOf(appString(context, language, R.string.column_and_row_name),
+                    appString(context, language, R.string.ancient_column_name),
+                    appString(context, language, R.string.modern_column_name),
+                    appString(context, language, R.string.musical_column_name),
+                    appString(context, language, R.string.gothic_column_name)),
                 isHeader = true,
                 rowIndex = 0,
-                totalRows = entries.size + 1
+                totalRows = entries.size + 1,
+                appLanguage = language
             )
             entries.forEachIndexed { rowIndex, entry ->
                 RuneRow(
@@ -179,7 +189,8 @@ fun RuneTable(entries: List<RuneEntry>) {
                     ),
                     isHeader = false,
                     rowIndex = rowIndex + 1,
-                    totalRows = entries.size + 1
+                    totalRows = entries.size + 1,
+                    appLanguage = language
                 )
             }
         }
@@ -191,7 +202,8 @@ fun RuneRow(
     cells: List<String?>,
     isHeader: Boolean,
     rowIndex: Int,
-    totalRows: Int
+    totalRows: Int,
+    appLanguage: AppLanguage
 ) {
     val columnWeights = listOf(0.205f, 0.205f, 0.205f, 0.205f, 0.205f)
 
@@ -208,7 +220,8 @@ fun RuneRow(
                 columnIndex = columnIndex,
                 rowIndex = rowIndex,
                 totalRows = totalRows,
-                totalColumns = cells.size
+                totalColumns = cells.size,
+                appLanguage = appLanguage
             )
         }
     }
@@ -223,7 +236,8 @@ fun RowScope.RuneCell(
     columnIndex: Int,
     rowIndex: Int,
     totalRows: Int,
-    totalColumns: Int
+    totalColumns: Int,
+    appLanguage: AppLanguage
 ) {
     val usesStressBackground = isHeader || isLatinColumn
     val bgColor = if (usesStressBackground) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onPrimary
@@ -256,11 +270,15 @@ fun RowScope.RuneCell(
             else -> textStyleByColumnIndex[columnIndex]
                 ?: ContrastArchaicText
         }
+        val finalTextStyle = when {
+            appLanguage != AppLanguage.ZH && isHeader -> textStyle.copy(fontSize = 9.sp)
+            else -> textStyle
+        }
 
         Text(
             text = displayText,
             textAlign = TextAlign.Center,
-            style = textStyle,
+            style = finalTextStyle,
             modifier = Modifier.padding(2.dp)
         )
     }

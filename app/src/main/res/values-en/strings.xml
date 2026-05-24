@@ -18,4 +18,12 @@
     <string name="bottom_bar_settings">Settings</string>
     <string name="settings_title">Settings</string>
     <string name="settings_language_label">Language</string>
+    <string name="dict_intro_para1">Madoka Runes (also known as Inukare Runes) are the characters that appear in the anime "Puella Magi Madoka Magica" produced by SHAFT, such as in witch barriers and magical</string>
+    <string name="dict_intro_para2">The characters of Madoka Runes have a one-to-one correspondence with Latin letters (including German letters, which have 4 more than English letters) and Arabic numerals.</string>
+    <string name="dict_intro_para3">Most of the Madoka Runes that appear in the show are used to spell German and English, but there are also some used to spell other languages such as Japanese romaji, Italian, Latin, etc.</string>
+    <string name="column_and_row_name">Font/\nCharacter</string>
+    <string name="ancient_column_name">Archaic</string>
+    <string name="modern_column_name">Modern</string>
+    <string name="musical_column_name">Musical</string>
+    <string name="gothic_column_name">Texturae</string>
 </resources>
