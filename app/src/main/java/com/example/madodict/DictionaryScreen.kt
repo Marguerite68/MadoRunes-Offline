@@ -300,7 +300,7 @@ private val entireTable = listOf(
     RuneEntry("G", "G", "G", "G", "G"),
     RuneEntry("H", "H", "H", "H", "H"),
     RuneEntry("I", "I", "I", "I", "I"),
-    RuneEntry("J", "J", "J", "J", "J"),
+    RuneEntry("J", "J", "J", null, "J"),
     RuneEntry("K", "K", "K", "K", "K"),
     RuneEntry("L", "L", "L", "L", "L"),
     RuneEntry("M", "M", "M", "M", "M"),

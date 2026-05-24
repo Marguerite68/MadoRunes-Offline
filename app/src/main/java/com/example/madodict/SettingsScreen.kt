@@ -6,7 +6,9 @@ import android.provider.MediaStore
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,20 +27,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.draw.innerShadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
@@ -46,10 +50,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.PathOperation
 
 import com.example.madodict.ui.theme.DarkOnPrimaryContainer
 import com.example.madodict.ui.theme.DarkSecondary
+import com.example.madodict.ui.theme.LanguageNameText
 import com.example.madodict.ui.theme.LightBackground
 import com.example.madodict.ui.theme.LightSecondary
 import com.example.madodict.ui.theme.MadoDictTheme
@@ -61,7 +65,16 @@ fun SettingsScreen(
     selectedTab: Int = 1,
     onTabSelected: (Int) -> Unit = {},
     switchSelected: Boolean,
+    onThemeChange: (Boolean) -> Unit = {}
 ) {
+    var isDarkTheme by remember { mutableStateOf(switchSelected) }
+    val radioOptions = listOf("中文", "English", "日本語")
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+
+    LaunchedEffect(switchSelected) {
+        isDarkTheme = switchSelected
+    }
+
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -104,9 +117,86 @@ fun SettingsScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 FixedThumbSwitch(
-                    checked = switchSelected,
-                    onCheckedChange = { /* TODO: Handle switch state change */ }
+                    checked = isDarkTheme,
+                    onCheckedChange = { newValue ->
+                        isDarkTheme = newValue
+                        onThemeChange(newValue)
+                    }
                 )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .fillMaxWidth()
+                    .height(57.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                painter = painterResource(id = R.drawable.language_setting_icon),
+                contentDescription = "Language Setting Icon",
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer)
+            )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "语言/Language",
+                    style = SettingLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 30.dp)
+                    .fillMaxWidth()
+                    .height(57.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                radioOptions.forEach { option ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(end = 20.dp)
+                            .clickable { onOptionSelected(option) }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    shape = CircleShape
+                                )
+                                .background(
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    shape = CircleShape
+                                )
+                        ) {
+                            // 选中时显示中间的小圆点
+                            if (selectedOption == option) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(9.dp)
+                                        .align(Alignment.Center)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Text(
+                            text = option,
+                            style = LanguageNameText,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            letterSpacing = 1.5.sp
+                        )
+                    }
+                }
             }
         }
     }
