@@ -168,7 +168,7 @@ fun SettingsScreen(
                         modifier = Modifier
                             .padding(end = 20.dp)
                             .then(
-                                if (option != "English" && option != "Japanese" && option != "日本語") {
+                                if (option != "日本語") {
                                     Modifier.clickable { onOptionSelected(option) }
                                 } else {
                                     Modifier // 不添加 clickable，变为不可点击
@@ -181,7 +181,7 @@ fun SettingsScreen(
                                 .clip(CircleShape)
                                 .border(
                                     width = 2.dp,
-                                    color = if (option != "English" && option != "Japanese" && option != "日本語") {
+                                    color = if (option != "日本語") {
                                         MaterialTheme.colorScheme.onPrimaryContainer
                                     } else {
                                         MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
@@ -210,7 +210,7 @@ fun SettingsScreen(
                         Text(
                             text = option,
                             style = LanguageNameText,
-                            color = if (option != "English" && option != "Japanese" && option != "日本語") {
+                            color = if (option != "日本語") {
                                 MaterialTheme.colorScheme.onPrimaryContainer
                             } else {
                                 MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
