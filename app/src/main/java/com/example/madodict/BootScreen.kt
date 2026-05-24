@@ -75,7 +75,7 @@ fun BootScreen() {
                 .padding(bottom = 20.dp)
         ) {
             Text(
-                text = "Version 0.0.1a / This application follows the CC BY-NC 4.0 license",
+                text = "Version 0.0.2a / This application follows the CC BY-NC 4.0 license",
                 style = SplashFooter,
                 color = LightBottomText,
                 letterSpacing = 0.5.sp,

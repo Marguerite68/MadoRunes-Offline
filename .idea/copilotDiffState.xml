@@ -75,6 +75,15 @@
             </PendingDiffInfo>
           </value>
         </entry>
+        <entry key="/ic_launcher (snapshot).xml">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="/ic_launcher (snapshot).xml" />
+              <option name="originalContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#10;&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;&#10;    &lt;background android:drawable=&quot;@drawable/ic_launcher_background&quot; /&gt;&#10;    &lt;foreground android:drawable=&quot;@drawable/ic_launcher_foreground&quot; /&gt;&#10;    &lt;monochrome android:drawable=&quot;@drawable/ic_launcher_foreground&quot; /&gt;&#10;&lt;/adaptive-icon&gt;" />
+              <option name="updatedContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#10;&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;&#10;    &lt;background android:drawable=&quot;@android:color/transparent&quot; /&gt;&#10;    &lt;foreground android:drawable=&quot;@mipmap/ic_launcher&quot; /&gt;&#10;    &lt;monochrome android:drawable=&quot;@mipmap/ic_launcher&quot; /&gt;&#10;&lt;/adaptive-icon&gt;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
         <entry key="/strings (snapshot).xml">
           <value>
             <PendingDiffInfo>
