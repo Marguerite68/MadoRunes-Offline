@@ -22,8 +22,17 @@
     <string name="dict_intro_para2">The characters of Madoka Runes have a one-to-one correspondence with Latin letters (including German letters, which have 4 more than English letters) and Arabic numerals.</string>
     <string name="dict_intro_para3">Most of the Madoka Runes that appear in the show are used to spell German and English, but there are also some used to spell other languages such as Japanese romaji, Italian, Latin, etc.</string>
     <string name="column_and_row_name">Font/\nCharacter</string>
-    <string name="ancient_column_name">Archaic</string>
-    <string name="modern_column_name">Modern</string>
-    <string name="musical_column_name">Musical</string>
-    <string name="gothic_column_name">Texturae</string>
+    <string name="ancient_font_name">Archaic</string>
+    <string name="modern_font_name">Modern</string>
+    <string name="musical_font_name">Musical</string>
+    <string name="gothic_font_name">Texturae</string>
+    <string name="converter_intro">You can convert the input text into Madoka Runes here.</string>
+    <string name="converter_input_hint">Please enter the text to be converted</string>
+    <string name="font_selection_dialog_title">Font</string>
+    <string name="text_size_selection_dialog_title">Text size</string>
+    <string name="text_color">Text color</string>
+    <string name="real_time_preview">Real-time preview</string>
+    <string name="output_box_hint">The conversion result will be displayed here</string>
+    <string name="png_export_button">Export as PNG</string>
+    <string name="svg_export_button">Export as SVG</string>
 </resources>

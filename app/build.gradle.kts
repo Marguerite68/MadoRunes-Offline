@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

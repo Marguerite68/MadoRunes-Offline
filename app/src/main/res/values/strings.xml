@@ -23,8 +23,18 @@
     <string name="dict_intro_para2">魔女文字的字符与拉丁字母（包括德文字母，比英文字母多出4个)和阿拉伯数字之间存在一一对应</string>
     <string name="dict_intro_para3">剧中出现的魔女文字大多用来拼写德文和英文，也有用来拼写日语罗马字、意大利语、拉丁语等其他语言</string>
     <string name="column_and_row_name">字体/\n字符</string>
-    <string name="ancient_column_name">古代体</string>
-    <string name="modern_column_name">现代体</string>
-    <string name="musical_column_name">音乐体</string>
-    <string name="gothic_column_name">哥特体</string>
+    <string name="ancient_font_name">古代体</string>
+    <string name="modern_font_name">现代体</string>
+    <string name="musical_font_name">音乐体</string>
+    <string name="gothic_font_name">哥特体</string>
+    <string name="converter_intro">你可以在这里将输入的文本转换为转换为魔女文字</string>
+    <string name="converter_input_hint">请输入要转换的文本</string>
+    <string name="font_selection_dialog_title">字体</string>
+    <string name="text_size_selection_dialog_title">字号</string>
+    <string name="text_color">颜色</string>
+    <string name="real_time_preview">实时预览</string>
+    <string name="output_box_hint">转换结果将显示在这里</string>
+    <string name="png_export_button">导出为PNG</string>
+    <string name="svg_export_button">导出为SVG</string>
+    <string name="converter_export_empty_hint">请先输入要转换的文本</string>
 </resources>
