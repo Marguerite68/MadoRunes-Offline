@@ -30,6 +30,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
 import com.example.madodict.ui.theme.ContrastArchaicText
 import com.example.madodict.ui.theme.ContrastGothicText
 import com.example.madodict.ui.theme.ContrastModrenText
@@ -294,7 +296,7 @@ fun ConverterScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant,
+                color = colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
                 thickness = 2.dp
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -351,7 +353,7 @@ fun ConverterScreen(
                 Button(
                     onClick = {
                         if (previewText.isNotEmpty()) {
-                            exportAsPng(context, previewText, selectedSize, textColor)
+                            exportAsPng(context, previewText, selectedSize, textColor, selectedFont)
                         } else {
                             Toast.makeText(
                                 context,
@@ -379,7 +381,7 @@ fun ConverterScreen(
                 Button(
                     onClick = {
                         if (previewText.isNotEmpty()) {
-                            exportAsSvg(context, previewText, selectedSize, textColor)
+                            exportAsSvg(context, previewText, selectedSize, textColor, selectedFont)
                         } else {
                             Toast.makeText(
                                 context,
@@ -468,54 +470,103 @@ enum class WitchFontType { ANCIENT, MODERN, MUSICAL, GOTHIC }
 
 
 // 导出工具
+// 字体资源的映射
+private fun WitchFontType.toFontRes(): Int = when (this) {
+    WitchFontType.ANCIENT -> R.font.madoka_archaic
+    WitchFontType.MODERN  -> R.font.madoka_modren
+    WitchFontType.MUSICAL -> R.font.madoka_musical
+    WitchFontType.GOTHIC  -> R.font.magicum_texturae
+}
 
 private fun exportAsPng(
     context: Context,
     text: String,
     sizeSp: Int,
-    color: Color
+    color: Color,
+    fontType: WitchFontType
 ) {
     try {
         val density = context.resources.displayMetrics.scaledDensity
+        val typeface = ResourcesCompat.getFont(context, fontType.toFontRes())
+
         val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
             textSize = sizeSp * density
             this.color = color.toArgb()
+            this.typeface = typeface
         }
-        val padding = 48f
+
+        val padding = 32f
         val lines = text.split("\n")
         val lineH = paint.fontSpacing
-        val w = ((lines.maxOfOrNull { paint.measureText(it) } ?: 200f) + padding * 2).coerceAtLeast(200f)
-        val h = (lineH * lines.size + padding * 2).coerceAtLeast(100f)
+        val maxLineWidth = lines.maxOfOrNull { paint.measureText(it) } ?: 0f
+        val w = (maxLineWidth + padding * 2).coerceAtLeast(1f)
+        val h = (lineH * lines.size + padding * 2).coerceAtLeast(1f)
 
-        val bmp = android.graphics.Bitmap.createBitmap(w.toInt(), h.toInt(), android.graphics.Bitmap.Config.ARGB_8888)
+        val bmp = android.graphics.Bitmap.createBitmap(
+            w.toInt(),
+            h.toInt(),
+            android.graphics.Bitmap.Config.ARGB_8888
+        )
         val canvas = android.graphics.Canvas(bmp)
-        canvas.drawColor(android.graphics.Color.WHITE)
         lines.forEachIndexed { i, line ->
-            canvas.drawText(line, padding, padding + lineH * (i + 1), paint)
+            canvas.drawText(
+                line,
+                padding,
+                padding + paint.fontSpacing * i - paint.ascent(),
+                paint
+            )
         }
 
         val file = File(context.cacheDir, "witch_${System.currentTimeMillis()}.png")
-        FileOutputStream(file).use { bmp.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
+        FileOutputStream(file).use {
+            bmp.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)
+        }
         shareFile(context, file, "image/png")
     } catch (e: Exception) {
         Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
     }
 }
 
-private fun exportAsSvg(context: Context, text: String, sizeSp: Int, color: Color) {
+private fun exportAsSvg(
+    context: Context,
+    text: String,
+    sizeSp: Int,
+    color: Color,
+    fontType: WitchFontType
+) {
     try {
         val hex = "#%06X".format(color.toArgb() and 0xFFFFFF)
+        val fontName = fontType.name.lowercase()
+
+        // 将字体文件读取并base64编码内嵌进SVG
+        val fontBase64 = context.resources.openRawResource(fontType.toFontRes())
+            .use { it.readBytes() }
+            .let { android.util.Base64.encodeToString(it, android.util.Base64.NO_WRAP) }
+
+        // 判断字体格式
+        val fontFormat = "truetype"
+
         val lines = text.split("\n")
         val lineH = sizeSp * 1.6f
         val svgH = lineH * lines.size + 40f
         val linesXml = lines.mapIndexed { i, line ->
-            """  <text x="20" y="${(20 + lineH * (i + 1)).toInt()}" font-size="$sizeSp" fill="$hex" font-family="serif">$line</text>"""
+            """  <text x="20" y="${(20 + lineH * (i + 1)).toInt()}" font-size="$sizeSp" fill="$hex" font-family="$fontName">$line</text>"""
         }.joinToString("\n")
+
         val svg = """<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="${svgH.toInt()}">
+  <defs>
+    <style>
+      @font-face {
+        font-family: '$fontName';
+        src: url('data:font/$fontFormat;base64,$fontBase64') format('$fontFormat');
+      }
+    </style>
+  </defs>
   <rect width="600" height="${svgH.toInt()}" fill="white"/>
 $linesXml
 </svg>"""
+
         val file = File(context.cacheDir, "witch_${System.currentTimeMillis()}.svg")
         file.writeText(svg)
         shareFile(context, file, "image/svg+xml")

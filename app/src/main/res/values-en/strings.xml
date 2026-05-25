@@ -35,4 +35,5 @@
     <string name="output_box_hint">The conversion result will be displayed here</string>
     <string name="png_export_button">Export as PNG</string>
     <string name="svg_export_button">Export as SVG</string>
+    <string name="converter_export_empty_hint">Please enter the text to be converted first</string>
 </resources>

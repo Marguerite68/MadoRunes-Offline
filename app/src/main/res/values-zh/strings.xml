@@ -36,4 +36,5 @@
     <string name="output_box_hint">转换结果将显示在这里</string>
     <string name="png_export_button">导出为PNG</string>
     <string name="svg_export_button">导出为SVG</string>
+    <string name="converter_export_empty_hint">请先输入要转换的文本</string>
 </resources>
