@@ -2,6 +2,7 @@ package com.example.madodict
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.animation.VectorConverter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -64,19 +65,22 @@ import java.io.FileOutputStream
 fun ConverterScreen(
     selectedTab: Int = 1,
     onTabSelected: (Int) -> Unit = {},
-    language: AppLanguage = AppLanguage.ZH
+    language: AppLanguage = AppLanguage.ZH,
+    inputText: String,
+    onInputTextChange: (String) -> Unit,
+    selectedFont: WitchFontType,
+    onSelectedFontChange: (WitchFontType) -> Unit,
+    selectedSize: Int,
+    onSelectedSizeChange: (Int) -> Unit,
+    colorHex: String,
+    onColorHexChange: (String) -> Unit
 ) {
-    var inputText by remember { mutableStateOf("") }
     val context = LocalContext.current
 
-    // ── 设置状态 ──────────────────────────────────────────────────────────────
-    var selectedFont by remember { mutableStateOf(WitchFontType.ANCIENT) }
     var fontMenuExpanded by remember { mutableStateOf(false) }
 
-    var selectedSize by remember { mutableStateOf(15) }
     var sizeMenuExpanded by remember { mutableStateOf(false) }
 
-    var colorHex by remember { mutableStateOf("6E6488") }
     val textColor = remember(colorHex) {
         runCatching {
             val c = colorHex.trimStart('#')
@@ -84,7 +88,7 @@ fun ConverterScreen(
         }.getOrNull() ?: Color(0xFF6E6488.toInt())
     }
 
-    val fontSizes = listOf(12, 14, 15, 18, 20, 24, 28, 32)
+    val fontSizes = listOf(12, 14, 15, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72)
     val controlWidth = 90.dp
     val controlHeight = 25.dp
 
@@ -114,7 +118,6 @@ fun ConverterScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 30.dp, vertical = 40.dp)
         ) {
-            // ── 标题 ──────────────────────────────────────────────────────────
             Text(
                 text = "Converter",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -129,7 +132,7 @@ fun ConverterScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── 输入框 ────────────────────────────────────────────────────────
+            // 输入框
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -153,7 +156,7 @@ fun ConverterScreen(
                 }
                 BasicTextField(
                     value = inputText,
-                    onValueChange = { inputText = it },
+                    onValueChange = { onInputTextChange(it) },
                     textStyle = PageBodyText.copy(color = MaterialTheme.colorScheme.onPrimaryContainer),
                     modifier = Modifier.fillMaxSize(),
                     decorationBox = { it() }
@@ -161,7 +164,7 @@ fun ConverterScreen(
             }
             Spacer(modifier = Modifier.height(10.dp))
 
-            // ── 字体选择 ──────────────────────────────────────────────────────
+            // 字体选择
             ConverterSettingRow(
                 label = appString(context, language, R.string.font_selection_dialog_title)
             ) {
@@ -198,7 +201,7 @@ fun ConverterScreen(
                                     )
                                 },
                                 onClick = {
-                                    selectedFont = font
+                                    onSelectedFontChange(font)
                                     fontMenuExpanded = false
                                 }
                             )
@@ -209,7 +212,7 @@ fun ConverterScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // ── 字号选择 ──────────────────────────────────────────────────────
+            // 字号选择
             ConverterSettingRow(
                 label = appString(context, language, R.string.text_size_selection_dialog_title)
             ) {
@@ -236,7 +239,7 @@ fun ConverterScreen(
                                     )
                                 },
                                 onClick = {
-                                    selectedSize = size
+                                    onSelectedSizeChange(size)
                                     sizeMenuExpanded = false
                                 }
                             )
@@ -247,7 +250,7 @@ fun ConverterScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // ── 颜色选择 ──────────────────────────────────────────────────────
+            // 颜色选择器
             ConverterSettingRow(
                 label = appString(context, language, R.string.text_color)
             ) {
@@ -263,9 +266,12 @@ fun ConverterScreen(
                     BasicTextField(
                         value = "#$colorHex",
                         onValueChange = { v ->
-                            colorHex = v.trimStart('#').take(6).uppercase()
+                            onColorHexChange(v.trimStart('#').take(6).uppercase())
                         },
-                        textStyle = PageBodyText.copy(fontSize = 11.sp),
+                        textStyle = PageBodyText.copy(
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
                         singleLine = true,
                         decorationBox = { innerTextField ->
                             Box(
@@ -293,7 +299,7 @@ fun ConverterScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── 实时预览 ──────────────────────────────────────────────────────
+            // 实时预览
             Text(
                 text = appString(context, language, R.string.real_time_preview),
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -313,6 +319,8 @@ fun ConverterScreen(
                         shape = RoundedCornerShape(20.dp)
                     )
                     .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+
             ) {
                 if (previewText.isEmpty()) {
                     Text(
@@ -334,7 +342,7 @@ fun ConverterScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ── 导出按钮 ──────────────────────────────────────────────────────
+            // 导出
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -400,7 +408,6 @@ fun ConverterScreen(
     }
 }
 
-// ── 辅助组件 ──────────────────────────────────────────────────────────────────
 
 @Composable
 private fun ConverterSettingRow(
@@ -457,12 +464,10 @@ private fun ConverterDropdownButton(
     }
 }
 
-// ── 字体枚举 ──────────────────────────────────────────────────────────────────
-
 enum class WitchFontType { ANCIENT, MODERN, MUSICAL, GOTHIC }
 
 
-// ── 导出工具 ──────────────────────────────────────────────────────────────────
+// 导出工具
 
 private fun exportAsPng(
     context: Context,
@@ -532,5 +537,19 @@ private fun shareFile(context: Context, file: File, mimeType: String) {
 @Preview
 @Composable
 fun ConverterScreenPreview() {
-    ConverterScreen()
+    var previewInputText by remember { mutableStateOf("") }
+    var previewFont by remember { mutableStateOf(WitchFontType.ANCIENT) }
+    var previewSize by remember { mutableStateOf(15) }
+    var previewColorHex by remember { mutableStateOf("6E6488") }
+    ConverterScreen(
+        inputText = previewInputText,
+        onInputTextChange = { previewInputText = it },
+        selectedFont = previewFont,
+        onSelectedFontChange = { previewFont = it },
+        selectedSize = previewSize,
+        onSelectedSizeChange = { previewSize = it },
+        colorHex = previewColorHex,
+        onColorHexChange = { previewColorHex = it }
+    )
 }
+

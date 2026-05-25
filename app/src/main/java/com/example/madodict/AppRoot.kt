@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import kotlinx.coroutines.delay
 
 @Composable
@@ -17,9 +18,13 @@ fun AppRoot(
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(0) }
     var showBootScreen by rememberSaveable { mutableStateOf(true) }
+    var converterInputText by androidx.compose.runtime.remember { mutableStateOf("") }
+    var converterFont by androidx.compose.runtime.remember { mutableStateOf(WitchFontType.ANCIENT) }
+    var converterSize by androidx.compose.runtime.remember { mutableStateOf(15) }
+    var converterColorHex by androidx.compose.runtime.remember { mutableStateOf("6E6488") }
 
     LaunchedEffect(Unit) {
-        delay(1200L)
+        delay(600L)
         showBootScreen = false
         selectedTab = 0
     }
@@ -39,7 +44,15 @@ fun AppRoot(
         1 -> ConverterScreen(
             selectedTab = 1,
             onTabSelected = { selectedTab = it },
-            language = language
+            language = language,
+            inputText = converterInputText,
+            onInputTextChange = { converterInputText = it },
+            selectedFont = converterFont,
+            onSelectedFontChange = { converterFont = it },
+            selectedSize = converterSize,
+            onSelectedSizeChange = { converterSize = it },
+            colorHex = converterColorHex,
+            onColorHexChange = { converterColorHex = it }
         )
         2 -> SettingsScreen(
             selectedTab = 2,

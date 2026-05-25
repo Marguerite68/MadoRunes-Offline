@@ -272,7 +272,7 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.settings_version_format, "v 0.0.2a"),
+                    text = appString(context, selectedLanguage, R.string.settings_version_format, " 0.1.0a"),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
