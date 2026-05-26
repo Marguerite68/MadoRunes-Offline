@@ -24,7 +24,7 @@ fun AppRoot(
     var converterColorHex by androidx.compose.runtime.remember { mutableStateOf("6E6488") }
 
     LaunchedEffect(Unit) {
-        delay(600L)
+        delay(400L)
         showBootScreen = false
         selectedTab = 0
     }

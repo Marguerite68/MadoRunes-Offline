@@ -272,7 +272,7 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.settings_version_format, " 0.1.0a"),
+                    text = appString(context, selectedLanguage, R.string.settings_version_format, " 1.0.0b"),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -284,7 +284,6 @@ fun SettingsScreen(
                     letterSpacing = 1.5.sp
                 )
 
-                // Github 仓库 - 超链接
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = appString(context, selectedLanguage, R.string.settings_repo_label),
@@ -316,7 +315,7 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
                 )
-                // 魔女文网站
+                Spacer(modifier = Modifier.height(5.dp))
                 Text(
                     text = appString(context, selectedLanguage, R.string.settings_link_madorunes),
                     style = InfoAndBottomBarLabelText.copy(
@@ -328,7 +327,8 @@ fun SettingsScreen(
                     }
                 )
 
-                // 萌娘百科
+                Spacer(modifier = Modifier.height(5.dp))
+
                 Text(
                     text = appString(context, selectedLanguage, R.string.settings_link_moegirl),
                     style = InfoAndBottomBarLabelText.copy(
@@ -342,6 +342,13 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
                     text = appString(context, selectedLanguage, R.string.settings_contributors_header),
+                    style = InfoAndBottomBarLabelText,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    letterSpacing = 1.5.sp
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = "null",
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp

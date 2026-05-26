@@ -32,9 +32,10 @@
     <string name="font_selection_dialog_title">字体</string>
     <string name="text_size_selection_dialog_title">字号</string>
     <string name="text_color">颜色</string>
-    <string name="real_time_preview">实时预览</string>
+    <string name="real_time_preview">实时预览*</string>
     <string name="output_box_hint">转换结果将显示在这里</string>
     <string name="png_export_button">导出为PNG</string>
     <string name="svg_export_button">导出为SVG</string>
     <string name="converter_export_empty_hint">请先输入要转换的文本</string>
+    <string name="converter_export_hint">* 除用户输入的换行外，因显示区域限制自动添加的换行不计入转换效果</string>
 </resources>

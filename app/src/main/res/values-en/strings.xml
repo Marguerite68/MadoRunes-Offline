@@ -31,9 +31,10 @@
     <string name="font_selection_dialog_title">Font</string>
     <string name="text_size_selection_dialog_title">Text size</string>
     <string name="text_color">Text color</string>
-    <string name="real_time_preview">Real-time preview</string>
+    <string name="real_time_preview">Real-time preview*</string>
     <string name="output_box_hint">The conversion result will be displayed here</string>
     <string name="png_export_button">Export as PNG</string>
     <string name="svg_export_button">Export as SVG</string>
     <string name="converter_export_empty_hint">Please enter the text to be converted first</string>
+    <string name="converter_export_hint">* Line breaks automatically added due to display area limitations, except for user-inputted line breaks, are not counted in the conversion result.</string>
 </resources>

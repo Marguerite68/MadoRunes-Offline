@@ -90,7 +90,7 @@ fun ConverterScreen(
         }.getOrNull() ?: Color(0xFF6E6488.toInt())
     }
 
-    val fontSizes = listOf(12, 14, 15, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72)
+    val fontSizes = listOf(12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60)
     val controlWidth = 90.dp
     val controlHeight = 25.dp
 
@@ -138,7 +138,7 @@ fun ConverterScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
+                    .height(90.dp)
                     .shadow(6.dp, RoundedCornerShape(20.dp), clip = false)
                     .clip(RoundedCornerShape(20.dp))
                     .background(MaterialTheme.colorScheme.surface)
@@ -304,14 +304,14 @@ fun ConverterScreen(
             // 实时预览
             Text(
                 text = appString(context, language, R.string.real_time_preview),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = colorScheme.onPrimaryContainer,
                 style = PageBodyText
             )
             Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .defaultMinSize(minHeight = 100.dp)
+                    .height(150.dp)
                     .shadow(6.dp, RoundedCornerShape(20.dp), clip = false)
                     .clip(RoundedCornerShape(20.dp))
                     .background(MaterialTheme.colorScheme.surface)
@@ -342,7 +342,7 @@ fun ConverterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // 导出
             Row(
@@ -350,14 +350,25 @@ fun ConverterScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Button(
                     onClick = {
                         if (previewText.isNotEmpty()) {
-                            exportAsPng(context, previewText, selectedSize, textColor, selectedFont)
+                            exportAsPng(
+                                context,
+                                previewText,
+                                selectedSize,
+                                textColor,
+                                selectedFont
+                            )
                         } else {
                             Toast.makeText(
                                 context,
-                                appString(context, language, R.string.converter_export_empty_hint),
+                                appString(
+                                    context,
+                                    language,
+                                    R.string.converter_export_empty_hint
+                                ),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -365,27 +376,50 @@ fun ConverterScreen(
                     modifier = Modifier
                         .width(110.dp)
                         .height(30.dp),
-                    shape = RoundedCornerShape(15.dp),
+                    shape = RoundedCornerShape(18.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 6.dp,
+                        focusedElevation = 4.dp,
+                        hoveredElevation = 4.dp,
+                        disabledElevation = 0.dp
+                    ),
+                    contentPadding = PaddingValues(
+                        horizontal = 10.dp,
+                        vertical = 4.dp
+                    )
                 ) {
                     Text(
-                        text = appString(context, language, R.string.png_export_button),
-                        style = InfoAndBottomBarLabelText,
+                        text = appString(
+                            context,
+                            language,
+                            R.string.png_export_button
+                        ),
+                        style = InfoAndBottomBarLabelText
                     )
                 }
 
                 Button(
                     onClick = {
                         if (previewText.isNotEmpty()) {
-                            exportAsSvg(context, previewText, selectedSize, textColor, selectedFont)
+                            exportAsSvg(
+                                context,
+                                previewText,
+                                selectedSize,
+                                textColor,
+                                selectedFont
+                            )
                         } else {
                             Toast.makeText(
                                 context,
-                                appString(context, language, R.string.converter_export_empty_hint),
+                                appString(
+                                    context,
+                                    language,
+                                    R.string.converter_export_empty_hint
+                                ),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -393,19 +427,40 @@ fun ConverterScreen(
                     modifier = Modifier
                         .width(110.dp)
                         .height(30.dp),
-                    shape = RoundedCornerShape(15.dp),
+                    shape = RoundedCornerShape(18.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 3.dp,
+                        pressedElevation = 6.dp,
+                        focusedElevation = 4.dp,
+                        hoveredElevation = 4.dp,
+                        disabledElevation = 0.dp
+                    ),
+                    contentPadding = PaddingValues(
+                        horizontal = 10.dp,
+                        vertical = 4.dp
+                    )
                 ) {
+
                     Text(
-                        text = appString(context, language, R.string.svg_export_button),
+                        text = appString(
+                            context,
+                            language,
+                            R.string.svg_export_button
+                        ),
                         style = InfoAndBottomBarLabelText
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = appString(context, language, R.string.converter_export_hint),
+                color = colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                style = PageBodyText
+            )
         }
     }
 }
@@ -538,23 +593,31 @@ private fun exportAsSvg(
         val hex = "#%06X".format(color.toArgb() and 0xFFFFFF)
         val fontName = fontType.name.lowercase()
 
-        // 将字体文件读取并base64编码内嵌进SVG
         val fontBase64 = context.resources.openRawResource(fontType.toFontRes())
             .use { it.readBytes() }
             .let { android.util.Base64.encodeToString(it, android.util.Base64.NO_WRAP) }
 
-        // 判断字体格式
         val fontFormat = "truetype"
 
         val lines = text.split("\n")
         val lineH = sizeSp * 1.6f
-        val svgH = lineH * lines.size + 40f
+        val padding = 32f
+
+        val density = context.resources.displayMetrics.scaledDensity
+        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = sizeSp * density
+            typeface = ResourcesCompat.getFont(context, fontType.toFontRes())
+        }
+        val maxLineWidth = lines.maxOfOrNull { paint.measureText(it) } ?: 0f
+        val svgW = (maxLineWidth + padding * 2).toInt().coerceAtLeast(1)
+        val svgH = (lineH * lines.size + padding * 2).toInt().coerceAtLeast(1)
+
         val linesXml = lines.mapIndexed { i, line ->
-            """  <text x="20" y="${(20 + lineH * (i + 1)).toInt()}" font-size="$sizeSp" fill="$hex" font-family="$fontName">$line</text>"""
+            """  <text x="$padding" y="${(padding + lineH * i - paint.ascent()).toInt()}" font-size="$sizeSp" fill="$hex" font-family="$fontName">$line</text>"""
         }.joinToString("\n")
 
         val svg = """<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="${svgH.toInt()}">
+<svg xmlns="http://www.w3.org/2000/svg" width="$svgW" height="$svgH">
   <defs>
     <style>
       @font-face {
@@ -563,7 +626,6 @@ private fun exportAsSvg(
       }
     </style>
   </defs>
-  <rect width="600" height="${svgH.toInt()}" fill="white"/>
 $linesXml
 </svg>"""
 
@@ -590,7 +652,7 @@ private fun shareFile(context: Context, file: File, mimeType: String) {
 fun ConverterScreenPreview() {
     var previewInputText by remember { mutableStateOf("") }
     var previewFont by remember { mutableStateOf(WitchFontType.ANCIENT) }
-    var previewSize by remember { mutableStateOf(15) }
+    var previewSize by remember { mutableStateOf(12) }
     var previewColorHex by remember { mutableStateOf("6E6488") }
     ConverterScreen(
         inputText = previewInputText,
