@@ -10,7 +10,8 @@ import java.util.Locale
 
 enum class AppLanguage(val locale: Locale) {
     ZH(Locale.SIMPLIFIED_CHINESE),
-    EN(Locale.ENGLISH)
+    EN(Locale.ENGLISH),
+    JA(Locale.JAPANESE)
 }
 
 fun appString(

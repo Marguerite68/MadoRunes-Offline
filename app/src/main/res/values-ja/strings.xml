@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">魔法字典</string> <!-- Keeping it identical to Chinese as it's translatable="false" -->
+    <string name="content_desc_dark_mode">ダークモードアイコン</string>
+    <string name="content_desc_language_setting">言語設定アイコン</string>
+    <string name="content_desc_info_icon">情報アイコン</string>
+    <string name="settings_dark_mode">ダークモード</string>
+    <string name="settings_about">アプリについて</string>
+    <string name="settings_version_format">バージョン: %1$s</string>
+    <string name="settings_author_format">創作者: %1$s</string>
+    <string name="settings_repo_label">リポジトリ: </string>
+    <string name="settings_repo_name">GitHub</string>
+    <string name="settings_license_notice">CC BY-NC 4.0ライセンス。商用利用は固く禁じられています</string>
+    <string name="settings_links_header">リンク/参考：</string>
+    <string name="settings_link_madorunes">魔女文字サイト</string>
+    <string name="settings_link_moegirl">萌娘百科</string>
+    <string name="settings_contributors_header">貢献者：</string>
+    <string name="bottom_bar_dict">辞書</string>
+    <string name="bottom_bar_converter">変換</string>
+    <string name="bottom_bar_settings">設定</string>
+    <string name="settings_title">設定</string>
+    <string name="settings_language_label">言語</string>
+    <string name="dict_intro_para1">魔女文字（まじょもじ、英: Madoka Runes、イヌカレー文字とも呼ばれる）\nSHAFT制作のアニメ『魔法少女まどか☆マギカ』の魔女の結界や、魔法少女の指輪などに登場する文字で、劇団イヌカレーによってデザインされました</string>
+    <string name="dict_intro_para2">魔女文字の文字は、ラテン文字（英語よりも4文字多いドイツ語の文字を含む）およびアラビア数字と一対一で対応しています</string>
+    <string name="dict_intro_para3">劇中に登場する魔女文字の多くはドイツ語や英語を綴るために使われていますが、日本語のローマ字、イタリア語、ラテン語などの他の言語を綴るのにも使われています</string>
+    <string name="column_and_row_name">フォント/\n文字</string>
+    <string name="ancient_font_name">古代体</string>
+    <string name="modern_font_name">現代体</string>
+    <string name="musical_font_name">音楽体</string>
+    <string name="gothic_font_name">ゴシック体</string>
+    <string name="converter_intro">ここでは、入力したテキストを魔女文字に変換することができます</string>
+    <string name="converter_input_hint">変換するテキストを入力してください</string>
+    <string name="font_selection_dialog_title">フォント</string>
+    <string name="text_size_selection_dialog_title">文字サイズ</string>
+    <string name="text_color">文字色</string>
+    <string name="real_time_preview">リアルタイムプレビュー*</string>
+    <string name="output_box_hint">変換結果はここに表示されます</string>
+    <string name="png_export_button">PNGとしてエクスポート</string>
+    <string name="svg_export_button">SVGとしてエクスポート</string>
+    <string name="converter_export_empty_hint">先に変換するテキストを入力してください</string>
+    <string name="converter_export_hint">* ユーザーが入力した改行を除き、表示領域の制限で自動的に追加された改行は変換結果に含まれません</string>
+</resources>

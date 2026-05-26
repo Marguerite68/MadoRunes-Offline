@@ -76,7 +76,7 @@ fun SettingsScreen(
     val languageOptions = listOf(
         LanguageOption("中文", AppLanguage.ZH, true),
         LanguageOption("English", AppLanguage.EN, true),
-        LanguageOption("日本語", null, false)
+        LanguageOption("日本語", AppLanguage.JA, true)
     )
     var selectedLanguage by remember { mutableStateOf(language) }
 
