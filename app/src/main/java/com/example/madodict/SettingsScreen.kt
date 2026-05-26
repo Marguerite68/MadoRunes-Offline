@@ -272,7 +272,7 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.settings_version_format, " 1.0.0b"),
+                    text = appString(context, selectedLanguage, R.string.settings_version_format, " 1.0.1b"),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
@@ -348,10 +348,14 @@ fun SettingsScreen(
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
-                    text = "null",
-                    style = InfoAndBottomBarLabelText,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    letterSpacing = 1.5.sp
+                    text = "Hecate2",
+                    style = InfoAndBottomBarLabelText.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    modifier = Modifier.clickable {
+                        openUri("https://github.com/Hecate2")
+                    }
                 )
             }
         }

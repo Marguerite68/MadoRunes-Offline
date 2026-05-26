@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -118,8 +119,10 @@ fun ConverterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 30.dp, vertical = 40.dp)
+                .padding(horizontal = 30.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 text = "Converter",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -375,7 +378,7 @@ fun ConverterScreen(
                     },
                     modifier = Modifier
                         .width(110.dp)
-                        .height(30.dp),
+                        .defaultMinSize(minHeight = 30.dp),
                     shape = RoundedCornerShape(18.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
@@ -426,7 +429,7 @@ fun ConverterScreen(
                     },
                     modifier = Modifier
                         .width(110.dp)
-                        .height(30.dp),
+                        .defaultMinSize(minHeight = 30.dp),
                     shape = RoundedCornerShape(18.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
