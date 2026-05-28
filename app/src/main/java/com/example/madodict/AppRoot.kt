@@ -22,6 +22,7 @@ fun AppRoot(
     var converterFont by androidx.compose.runtime.remember { mutableStateOf(WitchFontType.ANCIENT) }
     var converterSize by androidx.compose.runtime.remember { mutableStateOf(15) }
     var converterColorHex by androidx.compose.runtime.remember { mutableStateOf("6E6488") }
+    var converterSpacingMultiplier by androidx.compose.runtime.remember { mutableStateOf(1.0f) }
 
     LaunchedEffect(Unit) {
         delay(400L)
@@ -52,7 +53,9 @@ fun AppRoot(
             selectedSize = converterSize,
             onSelectedSizeChange = { converterSize = it },
             colorHex = converterColorHex,
-            onColorHexChange = { converterColorHex = it }
+            onColorHexChange = { converterColorHex = it },
+            spacingMultiplier = converterSpacingMultiplier,
+            onSpacingMultiplierChange = { converterSpacingMultiplier = it }
         )
         2 -> SettingsScreen(
             selectedTab = 2,

@@ -32,6 +32,7 @@
     <string name="converter_input_hint">変換するテキストを入力してください</string>
     <string name="font_selection_dialog_title">フォント</string>
     <string name="text_size_selection_dialog_title">文字サイズ</string>
+    <string name="text_letter_spacing">文字間隔</string>
     <string name="text_color">文字色</string>
     <string name="real_time_preview">リアルタイムプレビュー*</string>
     <string name="output_box_hint">変換結果はここに表示されます</string>

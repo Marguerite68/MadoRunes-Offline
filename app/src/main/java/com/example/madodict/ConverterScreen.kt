@@ -76,13 +76,17 @@ fun ConverterScreen(
     selectedSize: Int,
     onSelectedSizeChange: (Int) -> Unit,
     colorHex: String,
-    onColorHexChange: (String) -> Unit
+    onColorHexChange: (String) -> Unit,
+    spacingMultiplier: Float,
+    onSpacingMultiplierChange: (Float) -> Unit
 ) {
     val context = LocalContext.current
 
     var fontMenuExpanded by remember { mutableStateOf(false) }
 
     var sizeMenuExpanded by remember { mutableStateOf(false) }
+
+    var spacingMenuExpanded by remember { mutableStateOf(false) }
 
     val textColor = remember(colorHex) {
         runCatching {
@@ -92,6 +96,7 @@ fun ConverterScreen(
     }
 
     val fontSizes = listOf(12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60)
+    val spacingOptions = (10..20).map { it / 10f }
     val controlWidth = 90.dp
     val controlHeight = 25.dp
 
@@ -105,6 +110,7 @@ fun ConverterScreen(
     val previewText = remember(inputText) {
         inputText
     }
+    val previewLetterSpacing = ((spacingMultiplier - 1f) * selectedSize).sp
 
     Scaffold(
         bottomBar = {
@@ -255,6 +261,44 @@ fun ConverterScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
+            // 字间距倍率
+            ConverterSettingRow(
+                label = appString(context, language, R.string.text_letter_spacing)
+            ) {
+                Box {
+                    ConverterInputStyleBox(
+                        text = String.format("%.1fx", spacingMultiplier),
+                        modifier = Modifier
+                            .width(controlWidth)
+                            .height(controlHeight),
+                        onClick = { spacingMenuExpanded = true }
+                    )
+                    DropdownMenu(
+                        expanded = spacingMenuExpanded,
+                        onDismissRequest = { spacingMenuExpanded = false },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+                    ) {
+                        spacingOptions.forEach { multiplier ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = String.format("%.1fx", multiplier),
+                                        style = PageBodyText,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                },
+                                onClick = {
+                                    onSpacingMultiplierChange(multiplier)
+                                    spacingMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
             // 颜色选择器
             ConverterSettingRow(
                 label = appString(context, language, R.string.text_color)
@@ -297,6 +341,8 @@ fun ConverterScreen(
                 }
             }
 
+
+
             Spacer(modifier = Modifier.height(12.dp))
             HorizontalDivider(
                 color = colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
@@ -338,14 +384,15 @@ fun ConverterScreen(
                         text = previewText,
                         style = previewTextStyle.copy(
                             fontSize = selectedSize.sp,
-                            color = textColor
+                            color = textColor,
+                            letterSpacing = previewLetterSpacing
                         ),
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             // 导出
             Row(
@@ -362,7 +409,8 @@ fun ConverterScreen(
                                 previewText,
                                 selectedSize,
                                 textColor,
-                                selectedFont
+                                selectedFont,
+                                spacingMultiplier
                             )
                         } else {
                             Toast.makeText(
@@ -413,7 +461,8 @@ fun ConverterScreen(
                                 previewText,
                                 selectedSize,
                                 textColor,
-                                selectedFont
+                                selectedFont,
+                                spacingMultiplier
                             )
                         } else {
                             Toast.makeText(
@@ -458,7 +507,7 @@ fun ConverterScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Text(
                 text = appString(context, language, R.string.converter_export_hint),
                 color = colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
@@ -524,6 +573,40 @@ private fun ConverterDropdownButton(
     }
 }
 
+@Composable
+private fun ConverterInputStyleBox(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(14.dp)
+            )
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 7.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = text,
+            style = PageBodyText,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.down_arrow),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(12.dp),
+        )
+    }
+}
+
 enum class WitchFontType { ANCIENT, MODERN, MUSICAL, GOTHIC }
 
 
@@ -541,7 +624,8 @@ private fun exportAsPng(
     text: String,
     sizeSp: Int,
     color: Color,
-    fontType: WitchFontType
+    fontType: WitchFontType,
+    spacingMultiplier: Float
 ) {
     try {
         val density = context.resources.displayMetrics.scaledDensity
@@ -551,6 +635,7 @@ private fun exportAsPng(
             textSize = sizeSp * density
             this.color = color.toArgb()
             this.typeface = typeface
+            letterSpacing = spacingMultiplier - 1f
         }
 
         val padding = 32f
@@ -590,7 +675,8 @@ private fun exportAsSvg(
     text: String,
     sizeSp: Int,
     color: Color,
-    fontType: WitchFontType
+    fontType: WitchFontType,
+    spacingMultiplier: Float
 ) {
     try {
         val hex = "#%06X".format(color.toArgb() and 0xFFFFFF)
@@ -610,13 +696,14 @@ private fun exportAsSvg(
         val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
             textSize = sizeSp * density
             typeface = ResourcesCompat.getFont(context, fontType.toFontRes())
+            letterSpacing = spacingMultiplier - 1f
         }
         val maxLineWidth = lines.maxOfOrNull { paint.measureText(it) } ?: 0f
         val svgW = (maxLineWidth + padding * 2).toInt().coerceAtLeast(1)
         val svgH = (lineH * lines.size + padding * 2).toInt().coerceAtLeast(1)
 
         val linesXml = lines.mapIndexed { i, line ->
-            """  <text x="$padding" y="${(padding + lineH * i - paint.ascent()).toInt()}" font-size="$sizeSp" fill="$hex" font-family="$fontName">$line</text>"""
+            """  <text x=\"$padding\" y=\"${(padding + lineH * i - paint.ascent()).toInt()}\" font-size=\"$sizeSp\" fill=\"$hex\" font-family=\"$fontName\" letter-spacing=\"${"%.2f".format(spacingMultiplier - 1f)}em\">$line</text>"""
         }.joinToString("\n")
 
         val svg = """<?xml version="1.0" encoding="UTF-8"?>
@@ -657,6 +744,7 @@ fun ConverterScreenPreview() {
     var previewFont by remember { mutableStateOf(WitchFontType.ANCIENT) }
     var previewSize by remember { mutableStateOf(12) }
     var previewColorHex by remember { mutableStateOf("6E6488") }
+    var previewSpacingMultiplier by remember { mutableStateOf(1.0f) }
     ConverterScreen(
         inputText = previewInputText,
         onInputTextChange = { previewInputText = it },
@@ -665,7 +753,9 @@ fun ConverterScreenPreview() {
         selectedSize = previewSize,
         onSelectedSizeChange = { previewSize = it },
         colorHex = previewColorHex,
-        onColorHexChange = { previewColorHex = it }
+        onColorHexChange = { previewColorHex = it },
+        spacingMultiplier = previewSpacingMultiplier,
+        onSpacingMultiplierChange = { previewSpacingMultiplier = it }
     )
 }
 

@@ -30,6 +30,7 @@
     <string name="converter_input_hint">Please enter the text to be converted</string>
     <string name="font_selection_dialog_title">Font</string>
     <string name="text_size_selection_dialog_title">Text size</string>
+    <string name="text_letter_spacing">Letter spacing</string>
     <string name="text_color">Text color</string>
     <string name="real_time_preview">Real-time preview*</string>
     <string name="output_box_hint">The conversion result will be displayed here</string>
