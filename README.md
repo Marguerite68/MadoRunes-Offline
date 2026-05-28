@@ -39,7 +39,9 @@
 
  <img src="./art/pv1.jpg" width="240" alt="BootScreen"/>  <img src="./art/pv2.jpg" width="240" alt="Converter & Languages"/>  <img src="./art/pv3.jpg" width="240" alt="Dual Themes"/> 
 
- ## 安装
+ ---
+
+## 安装
 
  于Release页面下载意向版本的安装包即可
 
@@ -47,12 +49,10 @@
  
  推荐系统版本： Android 13或以上
 
- ## 后期开发方向
+ ---
 
- 1.导出功能加入自定义字间距
+## 后期开发方向
 
- 2.转换器支持双向转换
+ 1.魔女百科功能
 
- 3.魔女百科功能
-
- 4.UI优化
+ 2.UI优化
