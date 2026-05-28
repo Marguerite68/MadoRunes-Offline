@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">魔法字典</string> <!-- Keeping it identical to Chinese as it's translatable="false" -->
+    <string name="app_name" translatable="false">魔法字典</string>
     <string name="content_desc_dark_mode">ダークモードアイコン</string>
     <string name="content_desc_language_setting">言語設定アイコン</string>
     <string name="content_desc_info_icon">情報アイコン</string>

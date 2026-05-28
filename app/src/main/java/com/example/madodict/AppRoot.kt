@@ -14,7 +14,7 @@ fun AppRoot(
     language: AppLanguage,
     isDarkTheme: Boolean,
     onThemeChange: (Boolean) -> Unit,
-    onLanguageChange: (AppLanguage) -> Unit
+    onLanguageChange: (AppLanguage) -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(0) }
     var showBootScreen by rememberSaveable { mutableStateOf(true) }

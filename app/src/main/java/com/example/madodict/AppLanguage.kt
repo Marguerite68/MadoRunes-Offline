@@ -32,6 +32,5 @@ fun appString(
     config.setLayoutDirection(locale)
     val localizedContext = context.createConfigurationContext(config)
     val result = localizedContext.resources.getString(resId, *formatArgs)
-    Log.d("appString", "lang=${language.locale}, resId=$resId, result=$result")
     return localizedContext.resources.getString(resId, *formatArgs)
 }
