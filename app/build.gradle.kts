@@ -16,8 +16,8 @@ android {
         applicationId = "com.example.madodict"
         minSdk = 27
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.0.2b"
+        versionCode = 18
+        versionName = "1.1.0a"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

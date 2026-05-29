@@ -7,6 +7,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import com.example.madodict.wiki.WikiScreen.SearchScreen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -57,8 +58,13 @@ fun AppRoot(
             spacingMultiplier = converterSpacingMultiplier,
             onSpacingMultiplierChange = { converterSpacingMultiplier = it }
         )
-        2 -> SettingsScreen(
+        2 -> SearchScreen(
             selectedTab = 2,
+            onTabSelected = { selectedTab = it },
+            language = language
+        )
+        3 -> SettingsScreen(
+            selectedTab = 3,
             onTabSelected = { selectedTab = it },
             switchSelected = isDarkTheme,
             onThemeChange = onThemeChange,

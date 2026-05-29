@@ -65,7 +65,7 @@ import com.example.madodict.ui.theme.SettingLabelText
 
 @Composable
 fun SettingsScreen(
-    selectedTab: Int = 2,
+    selectedTab: Int = 3,
     onTabSelected: (Int) -> Unit = {},
     switchSelected: Boolean,
     onThemeChange: (Boolean) -> Unit = {},
@@ -272,7 +272,7 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.settings_version_format, " 1.0.2b"),
+                    text = appString(context, selectedLanguage, R.string.settings_version_format, " 1.1.0a"),
                     style = InfoAndBottomBarLabelText,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 1.5.sp
