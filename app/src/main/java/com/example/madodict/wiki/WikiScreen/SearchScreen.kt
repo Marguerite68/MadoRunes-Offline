@@ -1,5 +1,6 @@
 package com.example.madodict.wiki.WikiScreen
 
+import android.R.attr.letterSpacing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -41,6 +42,9 @@ import com.example.madodict.appString
 import com.example.madodict.ui.theme.PageBodyText
 import com.example.madodict.ui.theme.PageTitle
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
+import com.example.madodict.ui.theme.InfoAndBottomBarLabelText
+import com.example.madodict.ui.theme.SettingLabelText
 
 @Composable
 fun SearchScreen(
@@ -52,8 +56,9 @@ fun SearchScreen(
 
     val queryState = remember { mutableStateOf("") }
 
-    val interactionSource1 = remember { MutableInteractionSource() }
-    val interactionSource2 = remember { MutableInteractionSource() }
+    val hasLastRead = true // 这里应该根据实际数据来判断是否有上次阅读记录
+
+    val letterSpacingValue = if (language == AppLanguage.ZH) 2.sp else 0.sp
 
     Scaffold(
         bottomBar = {
@@ -84,9 +89,10 @@ fun SearchScreen(
                 Text(
                     text = appString(context, language, R.string.wiki_greeting),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+                    style = SettingLabelText.copy(fontSize = 18.sp),
+                    letterSpacing = letterSpacingValue
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 BasicTextField(
                     value = queryState.value,
@@ -112,7 +118,7 @@ fun SearchScreen(
                                 if (queryState.value.isEmpty()) {
                                     Text(
                                         text = appString(context, language, R.string.wiki_search_hint),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
                                         style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)
                                     )
                                 }
@@ -127,7 +133,7 @@ fun SearchScreen(
                                 ),
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(22.dp)
                                     .clickable { }
                             )
                         }
@@ -151,7 +157,8 @@ fun SearchScreen(
                                     bounded = true
                                 ),
                                 onClick = { /* 随机文章 */ }
-                            ),
+                            )
+                            .padding(horizontal = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -164,7 +171,7 @@ fun SearchScreen(
                         Text(
                             text = appString(context, language, R.string.wiki_random),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)
+                            style = InfoAndBottomBarLabelText.copy(fontSize = 14.sp)
                         )
                     }
                     Row(
@@ -175,23 +182,50 @@ fun SearchScreen(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = ripple(bounded = true),
                                 onClick = { /* 全部文章 */ }
-                            ),
+                            ).
+                        padding(horizontal = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.all),
                             contentDescription = appString(context, language, R.string.wiki_all),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(25.dp)
+                            modifier = Modifier.size(27.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = appString(context, language, R.string.wiki_all),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)
+                            style = InfoAndBottomBarLabelText.copy(fontSize = 14.sp)
                         )
                     }
                 }
+
+                if(hasLastRead){
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = appString(context, language, R.string.continue_last_reading),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "开发中",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp),
+                            textDecoration = TextDecoration.Underline,
+                            modifier = Modifier.clickable(
+                                onClick = { /* 直接跳转至上次打开的条目 */ },
+                            )
+                        )
+                    }
+                }
+
             }
         }
     }
