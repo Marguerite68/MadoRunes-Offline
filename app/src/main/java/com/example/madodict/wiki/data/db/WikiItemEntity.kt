@@ -8,7 +8,7 @@ data class WikiItemEntity(
     // 与JSON文件中的id字段一致
     @PrimaryKey
     val entryId: String,
-    val category: Int,
+    val category: Int,// 0-词条，1-角色，2-魔女
     val name: String,
     // 图片路径为空时存null
     val imagePath: String?,

@@ -56,7 +56,7 @@ fun SearchScreen(
 
     val queryState = remember { mutableStateOf("") }
 
-    val hasLastRead = true // 这里应该根据实际数据来判断是否有上次阅读记录
+    val hasLastRead = true // 临时模拟
 
     val letterSpacingValue = if (language == AppLanguage.ZH) 2.sp else 0.sp
 
@@ -225,7 +225,6 @@ fun SearchScreen(
                         )
                     }
                 }
-
             }
         }
     }

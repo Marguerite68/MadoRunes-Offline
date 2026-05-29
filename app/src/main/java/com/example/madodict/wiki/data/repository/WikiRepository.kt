@@ -12,7 +12,7 @@ data class WikiItem(
     val name: String,
     val imagePath: String?,
     val content: String,
-    val externalLinks: List<ExternalLinkJson>,
+    val externalLinks: List<Nothing?>,
     val version: Int
 )
 
