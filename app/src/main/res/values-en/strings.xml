@@ -15,6 +15,7 @@
     <string name="settings_contributors_header">Contributors:</string>
     <string name="bottom_bar_dict">Dictionary</string>
     <string name="bottom_bar_converter">Converter</string>
+    <string name="bottom_bar_wiki">Wiki</string>
     <string name="bottom_bar_settings">Settings</string>
     <string name="settings_title">Settings</string>
     <string name="settings_language_label">Language</string>
@@ -38,4 +39,12 @@
     <string name="svg_export_button">Export as SVG</string>
     <string name="converter_export_empty_hint">Please enter the text to be converted first</string>
     <string name="converter_export_hint">* Line breaks automatically added due to display area limitations, except for user-inputted line breaks, are not counted in the conversion result.</string>
+    <string name="wiki_greeting">What would you like to learn about today?</string>
+    <string name="wiki_search_hint">Please enter keywords to search</string>
+    <string name="wiki_no_result">No relevant entries found</string>
+    <string name="wiki_random">Random</string>
+    <string name="wiki_all">All</string>
+    <string name="continue_last_reading">Continue last reading</string>
+    <string name="wiki_search_condition">Search condition: %1$s</string>
+    <string name="wiki_entry_num">Number of entries found: %1$s</string>
 </resources>

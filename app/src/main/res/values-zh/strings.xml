@@ -16,6 +16,7 @@
     <string name="settings_contributors_header">项目贡献者：</string>
     <string name="bottom_bar_dict">字典</string>
     <string name="bottom_bar_converter">转换</string>
+    <string name="bottom_bar_wiki">百科</string>
     <string name="bottom_bar_settings">设置</string>
     <string name="settings_title">设置</string>
     <string name="settings_language_label">语言</string>
@@ -39,4 +40,12 @@
     <string name="svg_export_button">导出为SVG</string>
     <string name="converter_export_empty_hint">请先输入要转换的文本</string>
     <string name="converter_export_hint">* 除用户输入的换行外，因显示区域限制自动添加的换行不计入转换效果</string>
+    <string name="wiki_greeting">今天有什么想要了解的?</string>
+    <string name="wiki_search_hint">请输入关键词搜索</string>
+    <string name="wiki_no_result">没有找到相关条目</string>
+    <string name="wiki_random">随机条目</string>
+    <string name="wiki_all">所有条目</string>
+    <string name="continue_last_reading">继续上次的浏览</string>
+    <string name="wiki_search_condition">搜索条件: %1$s</string>
+    <string name="wiki_entry_num">查找到条目数: %1$s</string>
 </resources>

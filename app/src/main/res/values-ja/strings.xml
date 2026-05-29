@@ -17,6 +17,7 @@
     <string name="settings_contributors_header">貢献者：</string>
     <string name="bottom_bar_dict">辞書</string>
     <string name="bottom_bar_converter">変換</string>
+    <string name="bottom_bar_wiki">百科</string>
     <string name="bottom_bar_settings">設定</string>
     <string name="settings_title">設定</string>
     <string name="settings_language_label">言語</string>
@@ -40,4 +41,12 @@
     <string name="svg_export_button">SVGとしてエクスポート</string>
     <string name="converter_export_empty_hint">先に変換するテキストを入力してください</string>
     <string name="converter_export_hint">* ユーザーが入力した改行を除き、表示領域の制限で自動的に追加された改行は変換結果に含まれません</string>
+    <string name="wiki_greeting">今日は何を学びたいですか？</string>
+    <string name="wiki_search_hint">キーワードを入力して検索してください</string>
+    <string name="wiki_no_result">関連するエントリが見つかりませんでした</string>
+    <string name="wiki_random">ランダムエントリ</string>
+    <string name="wiki_all">すべてのエントリ</string>
+    <string name="continue_last_reading">前回の閲覧を続ける</string>
+    <string name="wiki_search_condition">検索条件: %1$s</string>
+    <string name="wiki_entry_num">見つかったエントリ数: %1$s</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -58,9 +59,16 @@ fun BottomBar(
             0.dp
         ),
         BottomBarItem(
+            appString(context, language, R.string.bottom_bar_wiki),
+            R.drawable.wiki,
+            2,
+            30.dp,
+            0.dp
+        ),
+        BottomBarItem(
             appString(context, language, R.string.bottom_bar_settings),
             R.drawable.setting,
-            2,
+            3,
             30.dp,
             0.dp
         )
@@ -83,7 +91,7 @@ fun BottomBar(
                 modifier = Modifier
                     .weight(1f)
                     .height(65.dp)
-                    .padding(horizontal = 28.dp)
+                    .padding(horizontal = 12.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         if (isSelected) {
