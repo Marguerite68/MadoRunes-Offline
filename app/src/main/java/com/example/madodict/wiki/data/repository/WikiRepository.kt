@@ -13,7 +13,7 @@ data class WikiItem(
     val enName: String?,
     val imagePath: String?,
     val content: String,
-    val externalLinks: List<Nothing?>,
+    val externalLinks: List<ExternalLinkJson>,
     val version: Int
 )
 
@@ -24,7 +24,7 @@ class WikiRepository(private val dao: WikiDao) {
 
     // 搜索条目，支持模糊匹配，返回列表
     suspend fun search(keyword: String): List<WikiItem> =
-        dao.searchEntries(keyword).map { it.toModel() }
+        dao.searchEntries(buildFtsQuery(keyword)).map { it.toModel() }
 
     // 获取所有条目，返回列表
     suspend fun getAll(): List<WikiItem> =
@@ -49,4 +49,10 @@ class WikiRepository(private val dao: WikiDao) {
         else gson.fromJson(externalLinksJson, linkListType),
         version = version
     )
+
+    private fun buildFtsQuery(keyword: String): String =
+        keyword.trim()
+            .split(Regex("\\s+"))
+            .filter { it.isNotBlank() }
+            .joinToString(" ") { "${it}*" }
 }

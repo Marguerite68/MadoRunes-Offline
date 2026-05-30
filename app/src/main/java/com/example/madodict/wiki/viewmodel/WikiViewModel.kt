@@ -1,6 +1,7 @@
 package com.example.madodict.wiki.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.madodict.wiki.data.repository.WikiItem
 import com.example.madodict.wiki.data.repository.WikiRepository
@@ -114,5 +115,17 @@ class WikiViewModel(
     // 详情页返回列表页时重置详情状态
     fun resetDetailState() {
         _detailUiState.value = DetailUiState.Idle
+    }
+}
+
+class WikiViewModelFactory(
+    private val repository: WikiRepository
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(WikiViewModel::class.java)) {
+            return WikiViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
 }

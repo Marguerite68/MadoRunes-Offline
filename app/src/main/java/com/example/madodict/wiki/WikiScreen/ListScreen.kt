@@ -41,24 +41,30 @@ import com.example.madodict.appString
 import com.example.madodict.ui.theme.InfoAndBottomBarLabelText
 import com.example.madodict.ui.theme.PageTitle
 import com.example.madodict.wiki.data.repository.WikiItem
+import com.example.madodict.wiki.viewmodel.ListUiState
 
 @Composable
 fun ListScreen(
     selectedTab: Int = 2,
     onTabSelected: (Int) -> Unit = {},
     language: AppLanguage = AppLanguage.ZH,
-    sampleList: List<WikiItem> = sampleItems,
+    listUiState: ListUiState = ListUiState.Success(sampleItems),
     searchKeyword: String = "",
+    isAllResults: Boolean = false,
+    onBackToSearch: () -> Unit = {},
+    onItemClick: (WikiItem) -> Unit = {}
 ) {
     val context = LocalContext.current
 
     var selectedLanguage by remember { mutableStateOf(language) }
 
-    val searchCondition: String = searchKeyword.ifBlank {
-        "无"
+    val searchCondition: String = when {
+        isAllResults -> appString(context, selectedLanguage, R.string.wiki_all)
+        searchKeyword.isNotBlank() -> searchKeyword
+        else -> appString(context, selectedLanguage, R.string.wiki_all)
     }
 
-    val searchCount = sampleList.size
+    val searchCount = (listUiState as? ListUiState.Success)?.items?.size ?: 0
 
     Scaffold(
         bottomBar = {
@@ -92,7 +98,7 @@ fun ListScreen(
                     painter = painterResource(id = R.drawable.search),
                     contentDescription = "Search",
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.clickable { /* TODO: 返回搜索页面 */ }.size(27.dp)
+                    modifier = Modifier.clickable { onBackToSearch() }.size(27.dp)
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -122,14 +128,55 @@ fun ListScreen(
                 thickness = 2.dp
             )
             Spacer(modifier = Modifier.height(8.dp))
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp),
-            ) {
-                items(sampleList.size) { index ->
-                    ListItem(item = sampleList[index])
-                    if (index < sampleList.size - 1) {
-                        Spacer(modifier = Modifier.height(8.dp))
+
+            when (val state = listUiState) {
+                is ListUiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "加载中...",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = InfoAndBottomBarLabelText
+                        )
+                    }
+                }
+                is ListUiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = state.message,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = InfoAndBottomBarLabelText
+                        )
+                    }
+                }
+                is ListUiState.Success -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(vertical = 8.dp),
+                    ) {
+                        items(state.items.size) { index ->
+                            ListItem(item = state.items[index], onClick = onItemClick)
+                            if (index < state.items.size - 1) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
+                    }
+                }
+                ListUiState.Idle -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "请输入关键词进行搜索",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = InfoAndBottomBarLabelText
+                        )
                     }
                 }
             }
@@ -139,7 +186,8 @@ fun ListScreen(
 
 @Composable
 fun ListItem(
-    item: WikiItem
+    item: WikiItem,
+    onClick: (WikiItem) -> Unit = {}
 ){
     val categoryColor = when (item.category) {
         1 -> Color(0xFFFFB7C5) // 角色
@@ -153,7 +201,7 @@ fun ListItem(
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 14.dp)
             .clickable(
-            onClick = { /*TODO：跳转至词条详情页*/ },
+            onClick = { onClick(item) },
         ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -181,7 +229,7 @@ val sampleItems = listOf(
         "Gertrud",
         null,
         "蔷薇的魔女，原名格特鲁德，是一位拥有强大力量的魔女。她以其独特的能力和神秘的背景而闻名于世。蔷薇的魔女在历史上留下了许多传说和故事，她的存在一直是人们津津乐道的话题。",
-        externalLinks = listOf(null),
+        externalLinks = emptyList(),
         version = 1
     ),
     WikiItem(
@@ -191,7 +239,7 @@ val sampleItems = listOf(
         "Kaname Madoka",
         null,
         "鹿目圆香是《魔法少女小圆》中的主角之一，她是一个普通的初中生，后来成为了一名魔法少女。她以其善良、勇敢和坚定的性格赢得了许多粉丝的喜爱。鹿目圆香在故事中经历了许多挑战和冒险，她的成长和变化是整个故事的重要组成部分。",
-        externalLinks = listOf(null),
+        externalLinks = emptyList(),
         version = 1
     ),
     WikiItem(
@@ -201,7 +249,7 @@ val sampleItems = listOf(
         "Puella Magi Madoka Magica",
         null,
         "《魔法少女小圆》是一部由SHAFT制作的原创动画系列，讲述了一个普通的初中生鹿目圆香成为魔法少女后所经历的冒险和挑战。该系列以其独特的故事情节、深刻的主题和精美的动画风格而受到广泛赞誉。它探讨了希望、绝望、牺牲和人性的复杂关系，成为了现代动画中的经典之作。",
-        externalLinks = listOf(null),
+        externalLinks = emptyList(),
         version = 1
     )
 )

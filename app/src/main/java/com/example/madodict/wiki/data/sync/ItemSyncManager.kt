@@ -59,8 +59,6 @@ class ItemSyncManager(
         dao.rebuildFts()
 
         Log.d("EntrySyncManager", "同步完成，共处理 ${parsedEntries.size} 个条目")
-
-        Log.d("EntrySyncManager", "同步完成，共处理 ${parsedEntries.size} 个条目")
     }
 
     private fun EntryJson.toEntity(gson: Gson) = WikiItemEntity(

@@ -1,6 +1,5 @@
 package com.example.madodict.wiki.WikiScreen
 
-import android.R.attr.letterSpacing
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -18,15 +17,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,24 +37,30 @@ import com.example.madodict.AppLanguage
 import com.example.madodict.BottomBar
 import com.example.madodict.R
 import com.example.madodict.appString
-import com.example.madodict.ui.theme.PageBodyText
 import com.example.madodict.ui.theme.PageTitle
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import com.example.madodict.ui.theme.InfoAndBottomBarLabelText
 import com.example.madodict.ui.theme.SettingLabelText
+import com.example.madodict.wiki.data.db.VersionRecordsEntity
+import com.example.madodict.wiki.data.db.WikiDao
+import com.example.madodict.wiki.data.db.WikiItemEntity
+import com.example.madodict.wiki.data.repository.WikiRepository
+import com.example.madodict.wiki.viewmodel.WikiViewModel
 
 @Composable
 fun SearchScreen(
     selectedTab: Int = 2,
     onTabSelected: (Int) -> Unit = {},
     language: AppLanguage = AppLanguage.ZH,
+    viewModel: WikiViewModel,
+    onShowList: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
 
-    val queryState = remember { mutableStateOf("") }
+    val searchUiState by viewModel.searchUiState.collectAsState()
 
-    val hasLastRead = true // 临时模拟
+    val hasLastRead = searchUiState.lastViewedItem != null
 
     val letterSpacingValue = if (language == AppLanguage.ZH) 2.sp else 0.sp
 
@@ -95,8 +99,8 @@ fun SearchScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 BasicTextField(
-                    value = queryState.value,
-                    onValueChange = { queryState.value = it },
+                    value = searchUiState.keyword,
+                    onValueChange = { viewModel.onKeywordChange(it) },
                     singleLine = true,
                     modifier = Modifier
                         .width(300.dp)
@@ -115,7 +119,7 @@ fun SearchScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(modifier = Modifier.weight(1f)) {
-                                if (queryState.value.isEmpty()) {
+                                if (searchUiState.keyword.isEmpty()) {
                                     Text(
                                         text = appString(context, language, R.string.wiki_search_hint),
                                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
@@ -134,7 +138,13 @@ fun SearchScreen(
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier
                                     .size(22.dp)
-                                    .clickable { }
+                                    .clickable {
+                                        val keyword = searchUiState.keyword.trim()
+                                        if (keyword.isNotEmpty()) {
+                                            viewModel.search()
+                                            onShowList(keyword, false)
+                                        }
+                                    }
                             )
                         }
                     }
@@ -156,7 +166,9 @@ fun SearchScreen(
                                 indication = ripple(
                                     bounded = true
                                 ),
-                                onClick = { /* 随机文章 */ }
+                                onClick = {
+                                    viewModel.loadRandom { /* TODO: 跳转详情页 */ }
+                                }
                             )
                             .padding(horizontal = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -181,9 +193,12 @@ fun SearchScreen(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = ripple(bounded = true),
-                                onClick = { /* 全部文章 */ }
-                            ).
-                        padding(horizontal = 6.dp),
+                                onClick = {
+                                    viewModel.loadAll()
+                                    onShowList("", true)
+                                }
+                            )
+                            .padding(horizontal = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -215,12 +230,12 @@ fun SearchScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "开发中",
+                            text = searchUiState.lastViewedItem?.name ?: "",
                             color = MaterialTheme.colorScheme.primary,
                             style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp),
                             textDecoration = TextDecoration.Underline,
                             modifier = Modifier.clickable(
-                                onClick = { /* 直接跳转至上次打开的条目 */ },
+                                onClick = { /* TODO: 直接跳转至上次打开的条目 */ },
                             )
                         )
                     }
@@ -230,8 +245,25 @@ fun SearchScreen(
     }
 }
 
+private class PreviewWikiDao : WikiDao {
+    override suspend fun insertEntry(entry: WikiItemEntity) = Unit
+    override suspend fun updateEntry(entry: WikiItemEntity) = Unit
+    override suspend fun deleteEntry(entryId: String) = Unit
+    override suspend fun searchEntries(keyword: String): List<WikiItemEntity> = emptyList()
+    override suspend fun getAllEntries(): List<WikiItemEntity> = emptyList()
+    override suspend fun getRandomEntry(): WikiItemEntity? = null
+    override suspend fun getEntryById(entryId: String): WikiItemEntity? = null
+    override suspend fun insertVersionRecord(record: VersionRecordsEntity) = Unit
+    override suspend fun updateVersionRecord(record: VersionRecordsEntity) = Unit
+    override suspend fun deleteVersionRecord(entryId: String) = Unit
+    override suspend fun getAllVersionRecords(): List<VersionRecordsEntity> = emptyList()
+    override suspend fun getVersionRecord(entryId: String): VersionRecordsEntity? = null
+    override suspend fun rebuildFts() = Unit
+}
+
 @Composable
 @Preview
 fun SearchScreenPreview() {
-    SearchScreen()
+    val previewViewModel = remember { WikiViewModel(WikiRepository(PreviewWikiDao())) }
+    SearchScreen(viewModel = previewViewModel)
 }
