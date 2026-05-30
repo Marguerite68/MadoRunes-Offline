@@ -96,7 +96,7 @@ fun SearchScreen(
                     style = SettingLabelText.copy(fontSize = 18.sp),
                     letterSpacing = letterSpacingValue
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
                 BasicTextField(
                     value = searchUiState.keyword,
@@ -149,7 +149,7 @@ fun SearchScreen(
                         }
                     }
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(15.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

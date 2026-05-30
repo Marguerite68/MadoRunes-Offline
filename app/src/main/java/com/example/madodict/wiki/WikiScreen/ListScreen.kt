@@ -1,7 +1,9 @@
 package com.example.madodict.wiki.WikiScreen
 
+import android.R.attr.color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,11 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -127,7 +132,7 @@ fun ListScreen(
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
                 thickness = 2.dp
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             when (val state = listUiState) {
                 is ListUiState.Loading -> {
@@ -136,17 +141,25 @@ fun ListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "加载中...",
+                            text = appString(context, selectedLanguage, R.string.loading),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = InfoAndBottomBarLabelText
                         )
                     }
                 }
                 is ListUiState.Error -> {
-                    Box(
+                    Column(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.error),
+                            contentDescription = "Error",
+                            tint = Color(0xFFAF1C08),
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = state.message,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -157,7 +170,6 @@ fun ListScreen(
                 is ListUiState.Success -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(vertical = 8.dp),
                     ) {
                         items(state.items.size) { index ->
                             ListItem(item = state.items[index], onClick = onItemClick)
@@ -165,15 +177,45 @@ fun ListScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                             }
                         }
+                        if(state.items.isNotEmpty()) {
+                            item {
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = appString(context, selectedLanguage, R.string.wiki_list_end),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                                    style = InfoAndBottomBarLabelText,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                )
+                            }
+                        }
+                        else {
+                            item {
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = appString(context, selectedLanguage, R.string.wiki_no_results),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                                    style = InfoAndBottomBarLabelText,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                )
+                            }
+                        }
                     }
                 }
                 ListUiState.Idle -> {
-                    Box(
+                    Column(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.warning),
+                            contentDescription = "Warning",
+                            tint = Color(0xFFFAAD14),
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "请输入关键词进行搜索",
+                            text = appString(context, selectedLanguage, R.string.searching_warning),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = InfoAndBottomBarLabelText
                         )
@@ -199,12 +241,19 @@ fun ListItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 14.dp)
+            .height(40.dp)
+            .padding(horizontal = 14.dp)
+            .clip(RoundedCornerShape(20.dp))
             .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(
+                    bounded = true
+                ),
             onClick = { onClick(item) },
         ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Spacer(modifier = Modifier.width(4.dp))
         Box(
             modifier = Modifier
                 .size(10.dp)
@@ -214,7 +263,7 @@ fun ListItem(
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = item.name,
-            style = InfoAndBottomBarLabelText,
+            style = InfoAndBottomBarLabelText.copy(fontSize = 14.sp),
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.padding(start = 4.dp)
         )

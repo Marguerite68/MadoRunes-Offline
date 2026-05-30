@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val preferences = AppPreferences(applicationContext)
+        val preferences = AppDataStore(applicationContext)
 
         syncWiki(preferences)
         setContent {
@@ -53,13 +53,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
-private fun ComponentActivity.syncWiki(preferences: AppPreferences) {
+private fun ComponentActivity.syncWiki(DataStore: AppDataStore) {
     val currentVersion = packageManager
         .getPackageInfo(packageName, 0)
         .longVersionCode.toInt()
 
     lifecycleScope.launch(Dispatchers.IO) {
-        val lastSyncedVersion = preferences.lastSyncedVersionFlow.first()
+        val lastSyncedVersion = DataStore.lastSyncedVersionFlow.first()
 
         // 只有版本号变化时才同步（必然触发）
         if (currentVersion != lastSyncedVersion) {
@@ -68,7 +68,7 @@ private fun ComponentActivity.syncWiki(preferences: AppPreferences) {
             ItemSyncManager(dao, parser).sync()
 
             // 同步完成后记录当前版本号
-            preferences.setLastSyncedVersion(currentVersion)
+            DataStore.setLastSyncedVersion(currentVersion)
         }
     }
 }

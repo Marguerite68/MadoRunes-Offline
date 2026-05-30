@@ -1,8 +1,6 @@
 package com.example.madodict
 
 import android.content.Context
-import androidx.datastore.dataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -14,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore(name = "app_preferences")
 
-class AppPreferences(private val context: Context) {
+class AppDataStore(private val context: Context) {
     private object Keys {
         val DarkTheme = booleanPreferencesKey("pref_dark_theme")
         val Language = stringPreferencesKey("pref_language")
