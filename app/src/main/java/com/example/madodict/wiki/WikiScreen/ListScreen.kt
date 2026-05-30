@@ -88,8 +88,7 @@ fun ListScreen(
             Spacer(modifier = Modifier.height(40.dp) )
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -106,7 +105,7 @@ fun ListScreen(
                     modifier = Modifier.clickable { onBackToSearch() }.size(27.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
