@@ -16,7 +16,7 @@ data class SearchUiState(
     val lastViewedItem: WikiItem? = null
 )
 
-// 列表页 UI 状态
+// 列表页UI状态
 sealed class ListUiState {
     data object Idle : ListUiState()
     data object Loading : ListUiState()
@@ -24,7 +24,7 @@ sealed class ListUiState {
     data class Error(val message: String) : ListUiState()
 }
 
-// 详情页 UI 状态
+// 详情页UI状态
 sealed class DetailUiState {
     data object Idle : DetailUiState()
     data object Loading : DetailUiState()

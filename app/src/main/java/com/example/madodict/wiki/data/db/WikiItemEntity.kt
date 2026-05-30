@@ -10,6 +10,7 @@ data class WikiItemEntity(
     val entryId: String,
     val category: Int,// 0-词条，1-角色，2-魔女
     val name: String,
+    val enName: String?,
     // 图片路径为空时存null
     val imagePath: String?,
     val content: String,

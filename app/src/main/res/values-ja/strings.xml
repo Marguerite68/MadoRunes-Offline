@@ -48,5 +48,5 @@
     <string name="wiki_all">すべて</string>
     <string name="continue_last_reading">前回の閲覧を続ける </string>
     <string name="wiki_search_condition">検索条件: %1$s</string>
-    <string name="wiki_entry_num">見つかったエントリ数: %1$s</string>
+    <string name="wiki_entry_num">%1$s件の結果が見つかりました</string>
 </resources>

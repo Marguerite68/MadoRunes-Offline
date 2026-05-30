@@ -47,5 +47,5 @@
     <string name="wiki_all">所有条目</string>
     <string name="continue_last_reading">继续上次的浏览: </string>
     <string name="wiki_search_condition">搜索条件: %1$s</string>
-    <string name="wiki_entry_num">查找到条目数: %1$s</string>
+    <string name="wiki_entry_num">查找到 %1$s 条结果: </string>
 </resources>

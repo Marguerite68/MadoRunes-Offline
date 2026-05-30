@@ -7,5 +7,6 @@ import androidx.room.Fts4
 @Entity(tableName = "wiki_items_fts")
 data class WikiItemFtsEntity(
     val name: String,
-    val content: String
+    val content: String,
+    val enName: String?
 )

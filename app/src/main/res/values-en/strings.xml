@@ -46,5 +46,5 @@
     <string name="wiki_all">All</string>
     <string name="continue_last_reading">Continue last reading: </string>
     <string name="wiki_search_condition">Search condition: %1$s</string>
-    <string name="wiki_entry_num">Number of entries found: %1$s</string>
+    <string name="wiki_entry_num">Found %1$s results</string>
 </resources>

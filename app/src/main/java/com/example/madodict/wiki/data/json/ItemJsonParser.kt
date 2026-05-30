@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName
 data class EntryJson(
     @SerializedName("id")           val id: String,
     @SerializedName("category")     val category: Int,
+    @SerializedName("enName")      val enName: String?,
     @SerializedName("name")         val name: String,
     @SerializedName("imagePath")    val imagePath: String?,
     @SerializedName("content")      val content: String,

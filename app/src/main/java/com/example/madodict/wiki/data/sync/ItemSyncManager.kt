@@ -67,6 +67,7 @@ class ItemSyncManager(
         entryId = id,
         category = category,
         name = name,
+        enName = enName,
         imagePath = imagePath,
         content = content,
         externalLinksJson = if (externalLinks.isNullOrEmpty()) null

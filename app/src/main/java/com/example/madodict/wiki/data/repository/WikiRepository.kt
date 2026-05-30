@@ -10,6 +10,7 @@ data class WikiItem(
     val entryId: String,
     val category: Int,
     val name: String,
+    val enName: String?,
     val imagePath: String?,
     val content: String,
     val externalLinks: List<Nothing?>,
@@ -41,6 +42,7 @@ class WikiRepository(private val dao: WikiDao) {
         entryId = entryId,
         category = category,
         name = name,
+        enName = enName,
         imagePath = imagePath,
         content = content,
         externalLinks = if (externalLinksJson.isNullOrEmpty()) emptyList()
