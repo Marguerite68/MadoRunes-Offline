@@ -1,0 +1,19 @@
+{
+    "id": "0006",
+    "category": 2,
+    "enName": "Elsa Maria",
+    "name": "影之魔女",
+    "imagePath": "0006_Elsa_Maria.png",
+    "content": "性质是独善。为了所有的生命持续着祈祷的魔女。\n\n保持着祈祷的姿势不变，将世上存在的生命平等地吸收进那暗影之中。想要打倒这名魔女，就必须知晓何谓漆黑的苦痛。",
+    "externalLinks": [
+        {
+            "label": "萌娘百科",
+            "url": "https://mzh.moegirl.org.cn/%E9%AD%94%E5%A5%B3(%E9%AD%94%E6%B3%95%E5%B0%91%E5%A5%B3%E5%B0%8F%E5%9C%86)#"
+        },
+        {
+            "label":"魔法纪录中文Wiki",
+            "url":"https://magireco.moe/wiki/%E5%BD%B1%E4%B9%8B%E9%AD%94%E5%A5%B3"
+        }
+    ],
+    "version": 1
+}

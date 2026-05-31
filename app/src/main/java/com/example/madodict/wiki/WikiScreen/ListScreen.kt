@@ -190,6 +190,7 @@ fun ListScreen(
                                     style = InfoAndBottomBarLabelText,
                                     modifier = Modifier.padding(start = 16.dp)
                                 )
+                                Spacer(modifier = Modifier.height(10.dp))
                             }
                         }
                         else {
@@ -201,6 +202,7 @@ fun ListScreen(
                                     style = InfoAndBottomBarLabelText,
                                     modifier = Modifier.align(Alignment.CenterHorizontally)
                                 )
+                                Spacer(modifier = Modifier.height(10.dp))
                             }
                         }
                     }

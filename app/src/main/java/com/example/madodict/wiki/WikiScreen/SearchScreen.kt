@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -38,6 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,10 +67,12 @@ fun SearchScreen(
     onTabSelected: (Int) -> Unit = {},
     language: AppLanguage = AppLanguage.ZH,
     viewModel: WikiViewModel,
+    onReloadDatabase: () -> Unit = {},
     onShowList: (String, Boolean, Boolean) -> Unit = { _, _, _ -> },
     onShowDetail: (com.example.madodict.wiki.data.repository.WikiItem) -> Unit = {}
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     val searchUiState by viewModel.searchUiState.collectAsState()
 
@@ -91,12 +97,30 @@ fun SearchScreen(
             .padding(horizontal = 30.dp)
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            Text(
-                text = "Wiki",
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = PageTitle,
-                letterSpacing = 3.sp
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "Wiki",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = PageTitle,
+                    letterSpacing = 3.sp
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.reload),
+                    contentDescription = "reload_wiki_data",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(30.dp).clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = ripple(bounded = true),
+                        onClick = {
+                            onReloadDatabase()
+                        }
+                    )
+                )
+            }
+
             Spacer(modifier = Modifier.height(120.dp))
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -114,6 +138,17 @@ fun SearchScreen(
                     value = searchUiState.keyword,
                     onValueChange = { viewModel.onKeywordChange(it) },
                     singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            val keyword = searchUiState.keyword.trim()
+                            if (keyword.isNotEmpty()) {
+                                viewModel.search()
+                                onShowList(keyword, false, ftsChecked)
+                                focusManager.clearFocus()
+                            }
+                        }
+                    ),
                     modifier = Modifier
                         .width(300.dp)
                         .height(50.dp)
@@ -161,7 +196,7 @@ fun SearchScreen(
                         }
                     }
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(end = 40.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -191,7 +226,7 @@ fun SearchScreen(
                             .size(16.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(15.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -307,6 +342,7 @@ private class PreviewWikiDao : WikiDao {
     override suspend fun insertEntry(entry: WikiItemEntity) = Unit
     override suspend fun updateEntry(entry: WikiItemEntity) = Unit
     override suspend fun deleteEntry(entryId: String) = Unit
+    override suspend fun clearAllEntries() = Unit
     override suspend fun searchByName(keyword: String): List<WikiItemEntity> = emptyList()
     override suspend fun searchByContent(keyword: String): List<WikiItemEntity> = emptyList()
     override suspend fun getAllEntries(): List<WikiItemEntity> = emptyList()
@@ -315,6 +351,7 @@ private class PreviewWikiDao : WikiDao {
     override suspend fun insertVersionRecord(record: VersionRecordsEntity) = Unit
     override suspend fun updateVersionRecord(record: VersionRecordsEntity) = Unit
     override suspend fun deleteVersionRecord(entryId: String) = Unit
+    override suspend fun clearAllVersionRecords() = Unit
     override suspend fun getAllVersionRecords(): List<VersionRecordsEntity> = emptyList()
     override suspend fun getVersionRecord(entryId: String): VersionRecordsEntity? = null
     override suspend fun rebuildFts() = Unit

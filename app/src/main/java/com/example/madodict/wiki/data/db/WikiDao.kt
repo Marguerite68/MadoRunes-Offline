@@ -20,6 +20,9 @@ interface WikiDao {
     @Query("DELETE FROM wiki_items WHERE entryId = :entryId")
     suspend fun deleteEntry(entryId: String)
 
+    @Query("DELETE FROM wiki_items")
+    suspend fun clearAllEntries()
+
     // 名称搜索：匹配name或enName，速度快，作为默认搜索
     @Query("""
     SELECT * FROM wiki_items
@@ -62,6 +65,9 @@ interface WikiDao {
 
     @Query("DELETE FROM version_records WHERE entryId = :entryId")
     suspend fun deleteVersionRecord(entryId: String)
+
+    @Query("DELETE FROM version_records")
+    suspend fun clearAllVersionRecords()
 
     // 获取所有版本记录（同步时用于找出需要删除的废弃条目）
     @Query("SELECT * FROM version_records")
