@@ -1,5 +1,6 @@
 package com.example.madodict.wiki.WikiScreen
 
+import android.R.attr.checked
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,10 +28,13 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +46,7 @@ import com.example.madodict.appString
 import com.example.madodict.ui.theme.PageTitle
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.room.Fts3
 import com.example.madodict.ui.theme.InfoAndBottomBarLabelText
 import com.example.madodict.ui.theme.SettingLabelText
 import com.example.madodict.wiki.data.db.VersionRecordsEntity
@@ -54,7 +61,7 @@ fun SearchScreen(
     onTabSelected: (Int) -> Unit = {},
     language: AppLanguage = AppLanguage.ZH,
     viewModel: WikiViewModel,
-    onShowList: (String, Boolean) -> Unit = { _, _ -> },
+    onShowList: (String, Boolean, Boolean) -> Unit = { _, _, _ -> },
     onShowDetail: (com.example.madodict.wiki.data.repository.WikiItem) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -64,6 +71,8 @@ fun SearchScreen(
     val hasLastRead = searchUiState.lastViewedItem != null
 
     val letterSpacingValue = if (language == AppLanguage.ZH) 2.sp else 0.sp
+
+    var ftsChecked by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -143,14 +152,44 @@ fun SearchScreen(
                                         val keyword = searchUiState.keyword.trim()
                                         if (keyword.isNotEmpty()) {
                                             viewModel.search()
-                                            onShowList(keyword, false)
+                                            onShowList(keyword, false, ftsChecked)
                                         }
                                     }
                             )
                         }
                     }
                 )
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(end = 40.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        appString(context, language, R.string.fts),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = InfoAndBottomBarLabelText.copy(fontSize = 14.sp)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Checkbox(
+                        checked = ftsChecked,
+                        onCheckedChange = { checked ->
+                            ftsChecked = checked
+                            viewModel.onFullSearchToggle(checked)
+                        },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary,
+                            uncheckedColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
+                            checkmarkColor = MaterialTheme.colorScheme.onPrimary,
+                        ),
+                        modifier = Modifier
+                            .scale(0.75f)
+                            .size(16.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(6.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -200,7 +239,9 @@ fun SearchScreen(
                                 indication = ripple(bounded = true),
                                 onClick = {
                                     viewModel.loadAll()
-                                    onShowList("", true)
+                                    viewModel.onFullSearchToggle(false)
+                                    ftsChecked = false
+                                    onShowList("", true, false)
                                 }
                             )
                             .padding(horizontal = 6.dp),
@@ -254,7 +295,8 @@ private class PreviewWikiDao : WikiDao {
     override suspend fun insertEntry(entry: WikiItemEntity) = Unit
     override suspend fun updateEntry(entry: WikiItemEntity) = Unit
     override suspend fun deleteEntry(entryId: String) = Unit
-    override suspend fun searchEntries(keyword: String): List<WikiItemEntity> = emptyList()
+    override suspend fun searchByName(keyword: String): List<WikiItemEntity> = emptyList()
+    override suspend fun searchByContent(keyword: String): List<WikiItemEntity> = emptyList()
     override suspend fun getAllEntries(): List<WikiItemEntity> = emptyList()
     override suspend fun getRandomEntry(): WikiItemEntity? = null
     override suspend fun getEntryById(entryId: String): WikiItemEntity? = null

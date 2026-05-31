@@ -44,12 +44,16 @@
     <string name="wiki_no_result">No relevant entries found</string>
     <string name="wiki_random">Random</string>
     <string name="wiki_all">All</string>
+    <string name="all">(All)</string>
     <string name="continue_last_reading">Continue last reading: </string>
-    <string name="wiki_search_condition">Search condition: %1$s</string>
+    <string name="wiki_search_condition">keywords: %1$s, full-text search: %2$s</string>
     <string name="wiki_entry_num">Found %1$s results</string>
     <string name="loading">Loading…</string>
     <string name="searching_warning">Abnormal interface transition, please return to the query page and try again</string>
     <string name="wiki_list_end">No more entries</string>
     <string name="wiki_no_results">No relevant entries found</string>
     <string name="wiki_img_loading_error">Image loading failed</string>
+    <string name="fts">Full-text search</string>
+    <string name="on">on</string>
+    <string name="off">off</string>
 </resources>

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -261,14 +263,15 @@ private fun openExternalLink(context: android.content.Context, url: String) {
 }
 
 @Composable
-fun AssetImage(assetPath: String?,
-               language: AppLanguage) {
+fun AssetImage(assetPath: String?, language: AppLanguage) {
     val context = LocalContext.current
+
     val resolvedPath = remember(assetPath) {
         assetPath?.let {
             if (it.contains('/')) it else "wikiImg/$it"
         }
     }
+
     val bitmap = remember(resolvedPath) {
         resolvedPath?.let {
             runCatching {
@@ -281,12 +284,12 @@ fun AssetImage(assetPath: String?,
 
     if (bitmap == null) {
         Text(
-            text = appString(context,language, R.string.wiki_img_loading_error),
+            text = appString(context, language, R.string.wiki_img_loading_error),
             style = PageBodyText.copy(fontSize = 12.sp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(225.dp)
+                .heightIn(min = 150.dp, max = 225.dp)
                 .border(
                     width = 2.dp,
                     color = MaterialTheme.colorScheme.outlineVariant,
@@ -300,15 +303,15 @@ fun AssetImage(assetPath: String?,
     Image(
         bitmap = bitmap.asImageBitmap(),
         contentDescription = "Wiki Item Image",
+        contentScale = ContentScale.Fit,
         modifier = Modifier
             .fillMaxWidth()
-            .height(225.dp)
+            .heightIn(min = 150.dp, max = 225.dp)
             .border(
                 width = 2.dp,
                 color = MaterialTheme.colorScheme.outlineVariant,
                 shape = RoundedCornerShape(20.dp)
             )
-            .padding(8.dp)
             .clip(RoundedCornerShape(20.dp))
     )
 }

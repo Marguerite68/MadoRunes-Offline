@@ -46,12 +46,16 @@
     <string name="wiki_no_result">関連するエントリが見つかりませんでした</string>
     <string name="wiki_random">ランダム</string>
     <string name="wiki_all">すべて</string>
+    <string name="all">(すべて)</string>
     <string name="continue_last_reading">前回の閲覧を続ける </string>
-    <string name="wiki_search_condition">検索条件: %1$s</string>
+    <string name="wiki_search_condition">キーワード: %1$s、全文検索: %2$s</string>
     <string name="wiki_entry_num">%1$s件の結果が見つかりました</string>
     <string name="loading">読み込み中…</string>
     <string name="searching_warning">インターフェースの遷移が異常です。クエリページに戻って再試行してください</string>
     <string name="wiki_list_end">これ以上ありませんよ</string>
     <string name="wiki_no_results">関連するエントリが見つかりませんでした</string>
     <string name="wiki_img_loading_error">画像の読み込みに失敗しました</string>
+    <string name="fts">全文検索</string>
+    <string name="on">オン</string>
+    <string name="off">オフ</string>
 </resources>

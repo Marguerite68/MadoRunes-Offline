@@ -20,14 +20,25 @@ interface WikiDao {
     @Query("DELETE FROM wiki_items WHERE entryId = :entryId")
     suspend fun deleteEntry(entryId: String)
 
-    // 关键词搜索：匹配名称或正文内容
+    // 名称搜索：匹配name或enName，速度快，作为默认搜索
     @Query("""
-    SELECT wiki_items.* FROM wiki_items
-    JOIN wiki_items_fts ON wiki_items.rowid = wiki_items_fts.rowid
-    WHERE wiki_items_fts MATCH :keyword
-    ORDER BY wiki_items.name ASC
+    SELECT * FROM wiki_items
+    WHERE name LIKE '%' || :keyword || '%'
+    OR enName LIKE '%' || :keyword || '%'
+    ORDER BY name ASC
 """)
-    suspend fun searchEntries(keyword: String): List<WikiItemEntity>
+    suspend fun searchByName(keyword: String): List<WikiItemEntity>
+
+    // 全文搜索：在名称搜索基础上额外搜索 content
+    // 排除已经被名称搜索命中的结果，避免重复
+    @Query("""
+    SELECT * FROM wiki_items
+    WHERE content LIKE '%' || :keyword || '%'
+    AND name NOT LIKE '%' || :keyword || '%'
+    AND enName NOT LIKE '%' || :keyword || '%'
+    ORDER BY name ASC
+""")
+    suspend fun searchByContent(keyword: String): List<WikiItemEntity>
 
     // 获取所有条目
     @Query("SELECT * FROM wiki_items ORDER BY name ASC")
@@ -62,4 +73,5 @@ interface WikiDao {
 
     @Query("INSERT INTO wiki_items_fts(wiki_items_fts) VALUES('rebuild')")
     suspend fun rebuildFts()
+
 }

@@ -57,19 +57,27 @@ fun ListScreen(
     searchKeyword: String = "",
     isAllResults: Boolean = false,
     onBackToSearch: () -> Unit = {},
-    onItemClick: (WikiItem) -> Unit = {}
+    onItemClick: (WikiItem) -> Unit = {},
+    isFts: Boolean = false
 ) {
     val context = LocalContext.current
 
     var selectedLanguage by remember { mutableStateOf(language) }
 
     val searchCondition: String = when {
-        isAllResults -> appString(context, selectedLanguage, R.string.wiki_all)
+        isAllResults -> appString(context, selectedLanguage, R.string.all)
         searchKeyword.isNotBlank() -> searchKeyword
-        else -> appString(context, selectedLanguage, R.string.wiki_all)
+        else -> appString(context, selectedLanguage, R.string.all)
     }
 
     val searchCount = (listUiState as? ListUiState.Success)?.items?.size ?: 0
+
+    val ftsFlag = if(isFts) {
+        appString(context, selectedLanguage, R.string.on)
+    }
+    else {
+        appString(context, selectedLanguage, R.string.off)
+    }
 
     Scaffold(
         bottomBar = {
@@ -114,17 +122,12 @@ fun ListScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.wiki_search_condition, searchCondition),
+                    text = appString(context, selectedLanguage, R.string.wiki_search_condition, searchCondition,ftsFlag),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = InfoAndBottomBarLabelText
+                    style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
                 )
 
-                Text(
-                    text = appString(context, selectedLanguage, R.string.wiki_entry_num, searchCount),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = InfoAndBottomBarLabelText,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+
             }
             Spacer(modifier = Modifier.height(14.dp))
             HorizontalDivider(
@@ -180,10 +183,10 @@ fun ListScreen(
                             item {
                                 Spacer(modifier = Modifier.height(20.dp))
                                 Text(
-                                    text = appString(context, selectedLanguage, R.string.wiki_list_end),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                                    text = appString(context, selectedLanguage, R.string.wiki_entry_num, searchCount),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
                                     style = InfoAndBottomBarLabelText,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    modifier = Modifier.padding(start = 16.dp)
                                 )
                             }
                         }

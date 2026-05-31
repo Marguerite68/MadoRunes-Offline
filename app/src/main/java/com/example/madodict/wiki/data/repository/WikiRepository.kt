@@ -22,9 +22,21 @@ class WikiRepository(private val dao: WikiDao) {
     private val gson = Gson()
     private val linkListType = object : TypeToken<List<ExternalLinkJson>>() {}.type
 
-    // 搜索条目，支持模糊匹配，返回列表
-    suspend fun search(keyword: String): List<WikiItem> =
-        dao.searchEntries(buildFtsQuery(keyword)).map { it.toModel() }
+    // 普通搜索：只搜名称
+    suspend fun search(keyword: String): List<WikiItem> {
+        val k = keyword.trim()
+        if (k.isEmpty()) return emptyList()
+        return dao.searchByName(k).map { it.toModel() }
+    }
+
+    // 全文搜索：名称结果+内容结果，名称命中排前面
+    suspend fun searchFull(keyword: String): List<WikiItem> {
+        val k = keyword.trim()
+        if (k.isEmpty()) return emptyList()
+        val nameResults = dao.searchByName(k).map { it.toModel() }
+        val contentResults = dao.searchByContent(k).map { it.toModel() }
+        return nameResults + contentResults  // 名称命中自然排在前面
+    }
 
     // 获取所有条目，返回列表
     suspend fun getAll(): List<WikiItem> =

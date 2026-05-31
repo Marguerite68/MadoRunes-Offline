@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 // 搜索页 UI 状态
 data class SearchUiState(
     val keyword: String = "",
+    val isFullSearch: Boolean = false,
     val lastViewedItem: WikiItem? = null
 )
 
@@ -54,13 +55,23 @@ class WikiViewModel(
         _searchUiState.value = _searchUiState.value.copy(keyword = keyword)
     }
 
+    fun onFullSearchToggle(enabled: Boolean) {
+        _searchUiState.value = _searchUiState.value.copy(isFullSearch = enabled)
+    }
+
     fun search() {
-        val keyword = _searchUiState.value.keyword.trim()
+        val state = _searchUiState.value
+        val keyword = state.keyword.trim()
         if (keyword.isEmpty()) return
         viewModelScope.launch {
             _listUiState.value = ListUiState.Loading
             _listUiState.value = try {
-                ListUiState.Success(repository.search(keyword))
+                val results = if (state.isFullSearch) {
+                    repository.searchFull(keyword)
+                } else {
+                    repository.search(keyword)
+                }
+                ListUiState.Success(results)
             } catch (e: Exception) {
                 ListUiState.Error(e.message ?: "搜索失败")
             }
@@ -110,11 +121,6 @@ class WikiViewModel(
     // 列表页返回搜索页时重置列表状态
     fun resetListState() {
         _listUiState.value = ListUiState.Idle
-    }
-
-    // 详情页返回列表页时重置详情状态
-    fun resetDetailState() {
-        _detailUiState.value = DetailUiState.Idle
     }
 }
 

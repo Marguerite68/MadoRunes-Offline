@@ -37,6 +37,7 @@ fun AppRoot(
     var wikiScreen by rememberSaveable { mutableStateOf(WikiScreenType.Search) }
     var listSearchKeyword by rememberSaveable { mutableStateOf("") }
     var listIsAll by rememberSaveable { mutableStateOf(false) }
+    var listIsFts by rememberSaveable { mutableStateOf(false) }
     var detailBackTarget by rememberSaveable { mutableStateOf(WikiScreenType.Search) }
     var selectedWikiItem by remember { mutableStateOf<WikiItem?>(null) }
 
@@ -96,6 +97,7 @@ fun AppRoot(
                         listUiState = listUiState,
                         searchKeyword = listSearchKeyword,
                         isAllResults = listIsAll,
+                        isFts = listIsFts,
                         onBackToSearch = {
                             wikiScreen = WikiScreenType.Search
                             wikiViewModel.resetListState()
@@ -123,9 +125,10 @@ fun AppRoot(
                             onTabSelected = onTabSelectedHandler,
                             language = language,
                             viewModel = wikiViewModel,
-                            onShowList = { keyword, isAll ->
+                            onShowList = { keyword, isAll, isFts ->
                                 listSearchKeyword = keyword
                                 listIsAll = isAll
+                                listIsFts = isFts
                                 wikiScreen = WikiScreenType.List
                             },
                             onShowDetail = { item ->
@@ -142,9 +145,10 @@ fun AppRoot(
                         onTabSelected = onTabSelectedHandler,
                         language = language,
                         viewModel = wikiViewModel,
-                        onShowList = { keyword, isAll ->
+                        onShowList = { keyword, isAll, isFts ->
                             listSearchKeyword = keyword
                             listIsAll = isAll
+                            listIsFts = isFts
                             wikiScreen = WikiScreenType.List
                         },
                         onShowDetail = { item ->
