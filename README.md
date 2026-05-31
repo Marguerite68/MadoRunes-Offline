@@ -38,7 +38,7 @@
 
 ## 预览
 
- <img src="./art/pv1.jpg" width="240" alt="BootScreen"/>  <img src="./art/pv2.jpg" width="240" alt="Converter & Languages"/>  <img src="./art/pv3.jpg" width="240" alt="Dual Themes"/> 
+ <img src="./art/pv1.jpg" width="240" alt="BootScreen"/>  <img src="./art/pv2.jpg" width="240" alt="Converter & Languages"/>  <img src="./art/pv3.jpg" width="240" alt="Dual Themes"/> <img src="./art/pv4.jpg" width="240" alt="Offline Wiki"/><img src="./art/pv5.jpg" width="240" alt="Wiki Entry"/><img src="./art/pv6.jpg" width="240" alt="Multiple Languages and themes"/>
 
  ---
 
