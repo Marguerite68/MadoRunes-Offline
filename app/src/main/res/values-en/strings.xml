@@ -51,4 +51,5 @@
     <string name="searching_warning">Abnormal interface transition, please return to the query page and try again</string>
     <string name="wiki_list_end">No more entries</string>
     <string name="wiki_no_results">No relevant entries found</string>
+    <string name="wiki_img_loading_error">Image loading failed</string>
 </resources>

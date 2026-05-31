@@ -54,7 +54,8 @@ fun SearchScreen(
     onTabSelected: (Int) -> Unit = {},
     language: AppLanguage = AppLanguage.ZH,
     viewModel: WikiViewModel,
-    onShowList: (String, Boolean) -> Unit = { _, _ -> }
+    onShowList: (String, Boolean) -> Unit = { _, _ -> },
+    onShowDetail: (com.example.madodict.wiki.data.repository.WikiItem) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -167,7 +168,11 @@ fun SearchScreen(
                                     bounded = true
                                 ),
                                 onClick = {
-                                    viewModel.loadRandom { /* TODO: 跳转详情页 */ }
+                                    viewModel.loadRandom { item ->
+                                        if (item != null) {
+                                            onShowDetail(item)
+                                        }
+                                    }
                                 }
                             )
                             .padding(horizontal = 6.dp),

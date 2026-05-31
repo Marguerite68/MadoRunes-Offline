@@ -9,9 +9,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import com.example.madodict.wiki.WikiScreen.DetailScreen
 import com.example.madodict.wiki.WikiScreen.ListScreen
 import com.example.madodict.wiki.WikiScreen.SearchScreen
 import com.example.madodict.wiki.data.db.WikiDatabase
+import com.example.madodict.wiki.data.repository.WikiItem
 import com.example.madodict.wiki.data.repository.WikiRepository
 import kotlinx.coroutines.delay
 
@@ -32,9 +34,11 @@ fun AppRoot(
     var converterColorHex by remember { mutableStateOf("6E6488") }
     var converterSpacingMultiplier by remember { mutableStateOf(1.0f) }
 
-    var showWikiList by rememberSaveable { mutableStateOf(false) }
+    var wikiScreen by rememberSaveable { mutableStateOf(WikiScreenType.Search) }
     var listSearchKeyword by rememberSaveable { mutableStateOf("") }
     var listIsAll by rememberSaveable { mutableStateOf(false) }
+    var detailBackTarget by rememberSaveable { mutableStateOf(WikiScreenType.Search) }
+    var selectedWikiItem by remember { mutableStateOf<WikiItem?>(null) }
 
     val wikiDao = remember { WikiDatabase.getInstance(context).encyclopediaDao() }
     val wikiRepository = remember { WikiRepository(wikiDao) }
@@ -44,7 +48,7 @@ fun AppRoot(
     val onTabSelectedHandler: (Int) -> Unit = { tab ->
         selectedTab = tab
         if (tab == 2) {
-            showWikiList = false
+            wikiScreen = WikiScreenType.Search
             wikiViewModel.resetListState()
         }
     }
@@ -83,31 +87,73 @@ fun AppRoot(
             onSpacingMultiplierChange = { converterSpacingMultiplier = it }
         )
         2 -> {
-            if (showWikiList) {
-                ListScreen(
-                    selectedTab = 2,
-                    onTabSelected = onTabSelectedHandler,
-                    language = language,
-                    listUiState = listUiState,
-                    searchKeyword = listSearchKeyword,
-                    isAllResults = listIsAll,
-                    onBackToSearch = {
-                        showWikiList = false
-                        wikiViewModel.resetListState()
+            when (wikiScreen) {
+                WikiScreenType.List -> {
+                    ListScreen(
+                        selectedTab = 2,
+                        onTabSelected = onTabSelectedHandler,
+                        language = language,
+                        listUiState = listUiState,
+                        searchKeyword = listSearchKeyword,
+                        isAllResults = listIsAll,
+                        onBackToSearch = {
+                            wikiScreen = WikiScreenType.Search
+                            wikiViewModel.resetListState()
+                        },
+                        onItemClick = { item ->
+                            selectedWikiItem = item
+                            detailBackTarget = WikiScreenType.List
+                            wikiScreen = WikiScreenType.Detail
+                        }
+                    )
+                }
+                WikiScreenType.Detail -> {
+                    val detailItem = selectedWikiItem
+                    if (detailItem != null) {
+                        DetailScreen(
+                            selectedTab = 2,
+                            onTabSelected = onTabSelectedHandler,
+                            item = detailItem,
+                            language = language,
+                            onBack = { wikiScreen = detailBackTarget }
+                        )
+                    } else {
+                        SearchScreen(
+                            selectedTab = 2,
+                            onTabSelected = onTabSelectedHandler,
+                            language = language,
+                            viewModel = wikiViewModel,
+                            onShowList = { keyword, isAll ->
+                                listSearchKeyword = keyword
+                                listIsAll = isAll
+                                wikiScreen = WikiScreenType.List
+                            },
+                            onShowDetail = { item ->
+                                selectedWikiItem = item
+                                detailBackTarget = WikiScreenType.Search
+                                wikiScreen = WikiScreenType.Detail
+                            }
+                        )
                     }
-                )
-            } else {
-                SearchScreen(
-                    selectedTab = 2,
-                    onTabSelected = onTabSelectedHandler,
-                    language = language,
-                    viewModel = wikiViewModel,
-                    onShowList = { keyword, isAll ->
-                        listSearchKeyword = keyword
-                        listIsAll = isAll
-                        showWikiList = true
-                    }
-                )
+                }
+                WikiScreenType.Search -> {
+                    SearchScreen(
+                        selectedTab = 2,
+                        onTabSelected = onTabSelectedHandler,
+                        language = language,
+                        viewModel = wikiViewModel,
+                        onShowList = { keyword, isAll ->
+                            listSearchKeyword = keyword
+                            listIsAll = isAll
+                            wikiScreen = WikiScreenType.List
+                        },
+                        onShowDetail = { item ->
+                            selectedWikiItem = item
+                            detailBackTarget = WikiScreenType.Search
+                            wikiScreen = WikiScreenType.Detail
+                        }
+                    )
+                }
             }
         }
         3 -> SettingsScreen(
@@ -119,4 +165,10 @@ fun AppRoot(
             onLanguageChange = onLanguageChange
         )
     }
+}
+
+private enum class WikiScreenType {
+    Search,
+    List,
+    Detail
 }

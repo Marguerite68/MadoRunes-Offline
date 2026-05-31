@@ -53,4 +53,5 @@
     <string name="searching_warning">インターフェースの遷移が異常です。クエリページに戻って再試行してください</string>
     <string name="wiki_list_end">これ以上ありませんよ</string>
     <string name="wiki_no_results">関連するエントリが見つかりませんでした</string>
+    <string name="wiki_img_loading_error">画像の読み込みに失敗しました</string>
 </resources>
