@@ -1,4 +1,4 @@
-# MadoRunes Offline (魔女文字典与转换器)
+# Madoka Offline (魔女文字典、转换器与离线百科)
 
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android)](https://www.android.com)
 [![Compose](https://img.shields.io/badge/UI-Jetpack_Compose-4285F4?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
