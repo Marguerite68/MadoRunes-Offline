@@ -114,14 +114,16 @@ fun DetailScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                item {
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 70.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AssetImage(assetPath = item.imagePath,
-                            selectedLanguage)
+                if(item.imagePath!=null){
+                    item {
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 70.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AssetImage(assetPath = item.imagePath,
+                                selectedLanguage)
+                        }
                     }
                 }
 

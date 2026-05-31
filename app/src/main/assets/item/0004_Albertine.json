@@ -1,0 +1,15 @@
+{
+    "id": "0004",
+    "category": 2,
+    "enName": "Albertine",
+    "name": "涂鸦的魔女",
+    "imagePath": "0004_Albertine.png",
+    "content": "性质为“未知”。\n\n最喜欢捉迷藏。可是她的手下们并不聪明，没有任何人去寻找她。",
+    "externalLinks": [
+        {
+            "label": "魔法纪录中文Wiki",
+            "url": "https://magireco.moe/wiki/%E6%B6%82%E9%B8%A6%E7%9A%84%E9%AD%94%E5%A5%B3"
+        }
+    ],
+    "version": 1
+}

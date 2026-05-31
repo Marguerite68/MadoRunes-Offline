@@ -1,21 +1,35 @@
 package com.example.madodict
 
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.example.madodict.wiki.WikiScreen.DetailScreen
 import com.example.madodict.wiki.WikiScreen.ListScreen
 import com.example.madodict.wiki.WikiScreen.SearchScreen
 import com.example.madodict.wiki.data.db.WikiDatabase
+import com.example.madodict.wiki.data.json.ItemJsonParser
 import com.example.madodict.wiki.data.repository.WikiItem
 import com.example.madodict.wiki.data.repository.WikiRepository
+import com.example.madodict.wiki.data.sync.ItemSyncManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppRoot(
@@ -25,6 +39,7 @@ fun AppRoot(
     onLanguageChange: (AppLanguage) -> Unit,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     var selectedTab by rememberSaveable { mutableStateOf(0) }
     var showBootScreen by rememberSaveable { mutableStateOf(true) }
@@ -40,11 +55,33 @@ fun AppRoot(
     var listIsFts by rememberSaveable { mutableStateOf(false) }
     var detailBackTarget by rememberSaveable { mutableStateOf(WikiScreenType.Search) }
     var selectedWikiItem by remember { mutableStateOf<WikiItem?>(null) }
+    var reloadInProgress by remember { mutableStateOf(false) }
+    var reloadDialogVisible by remember { mutableStateOf(false) }
+    var reloadDone by remember { mutableStateOf(0) }
+    var reloadTotal by remember { mutableStateOf(0) }
 
     val wikiDao = remember { WikiDatabase.getInstance(context).encyclopediaDao() }
     val wikiRepository = remember { WikiRepository(wikiDao) }
     val wikiViewModel = remember { com.example.madodict.wiki.viewmodel.WikiViewModel(wikiRepository) }
     val listUiState by wikiViewModel.listUiState.collectAsState()
+    val onReloadDatabase: () -> Unit = onReloadDatabase@{
+        if (reloadInProgress) return@onReloadDatabase
+        reloadInProgress = true
+        reloadDialogVisible = true
+        reloadDone = 0
+        reloadTotal = 0
+        scope.launch(Dispatchers.IO) {
+            ItemSyncManager(wikiDao, ItemJsonParser(context)).reload { done, total ->
+                scope.launch(Dispatchers.Main) {
+                    reloadDone = done
+                    reloadTotal = total
+                }
+            }
+            scope.launch(Dispatchers.Main) {
+                reloadInProgress = false
+            }
+        }
+    }
 
     val onTabSelectedHandler: (Int) -> Unit = { tab ->
         selectedTab = tab
@@ -63,6 +100,40 @@ fun AppRoot(
     if (showBootScreen) {
         BootScreen()
         return
+    }
+
+    if (reloadDialogVisible) {
+        val progressValue = if (reloadTotal > 0) reloadDone.toFloat() / reloadTotal else null
+        AlertDialog(
+            onDismissRequest = {
+                if (!reloadInProgress) {
+                    reloadDialogVisible = false
+                }
+            },
+            confirmButton = {
+                if (!reloadInProgress) {
+                    TextButton(onClick = { reloadDialogVisible = false }) {
+                        Text(appString(context, language, R.string.close))
+                    }
+                }
+            },
+            title = { Text(appString(context, language, R.string.db_reload))},
+            text = {
+                Column {
+                    if (reloadInProgress) {
+                        Text(if (reloadTotal > 0) "$reloadDone / $reloadTotal" else appString(context, language, R.string.preparing_db))
+                        Spacer(modifier = Modifier.height(12.dp))
+                        if (progressValue == null) {
+                            LinearProgressIndicator()
+                        } else {
+                            LinearProgressIndicator(progress = { progressValue })
+                        }
+                    } else {
+                        Text(appString(context, language, R.string.db_reload_success))
+                    }
+                }
+            }
+        )
     }
 
     when (selectedTab) {
@@ -126,6 +197,7 @@ fun AppRoot(
                             onTabSelected = onTabSelectedHandler,
                             language = language,
                             viewModel = wikiViewModel,
+                            onReloadDatabase = onReloadDatabase,
                             onShowList = { keyword, isAll, isFts ->
                                 listSearchKeyword = keyword
                                 listIsAll = isAll
@@ -147,6 +219,7 @@ fun AppRoot(
                         onTabSelected = onTabSelectedHandler,
                         language = language,
                         viewModel = wikiViewModel,
+                        onReloadDatabase = onReloadDatabase,
                         onShowList = { keyword, isAll, isFts ->
                             listSearchKeyword = keyword
                             listIsAll = isAll

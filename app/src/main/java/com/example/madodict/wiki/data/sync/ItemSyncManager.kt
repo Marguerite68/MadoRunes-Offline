@@ -61,6 +61,25 @@ class ItemSyncManager(
         Log.d("EntrySyncManager", "同步完成，共处理 ${parsedEntries.size} 个条目")
     }
 
+    suspend fun reload(onProgress: (done: Int, total: Int) -> Unit = { _, _ -> }) {
+        val parsedEntries = parser.parseAll()
+        val total = parsedEntries.size
+
+        dao.clearAllEntries()
+        dao.clearAllVersionRecords()
+
+        onProgress(0, total)
+        parsedEntries.forEachIndexed { index, json ->
+            dao.insertEntry(json.toEntity(gson))
+            dao.insertVersionRecord(VersionRecordsEntity(json.id, json.version))
+            onProgress(index + 1, total)
+        }
+
+        dao.rebuildFts()
+
+        Log.d("EntrySyncManager", "重载完成，共处理 $total 个条目")
+    }
+
     private fun EntryJson.toEntity(gson: Gson) = WikiItemEntity(
         entryId = id,
         category = category,

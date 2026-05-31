@@ -1,0 +1,15 @@
+{
+    "id": "0011",
+    "category": 2,
+    "enName": "Roberta",
+    "name": "鸟笼的魔女",
+    "imagePath": "0011_Roberta.png",
+    "content": "性质为“愤怒”。在笼中跺着双脚，为得不到的东西而持续愤怒着。这名魔女喜爱酒精，手下们也极其容易燃烧。",
+    "externalLinks": [
+        {
+            "label": "魔法纪录中文Wiki",
+            "url": "https://magireco.moe/wiki/%E9%B8%9F%E7%AC%BC%E7%9A%84%E9%AD%94%E5%A5%B3"
+        }
+    ],
+    "version": 1
+}
