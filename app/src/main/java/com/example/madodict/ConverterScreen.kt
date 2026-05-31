@@ -345,7 +345,7 @@ fun ConverterScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
             HorizontalDivider(
-                color = colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
+                color = colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
                 thickness = 2.dp
             )
             Spacer(modifier = Modifier.height(12.dp))

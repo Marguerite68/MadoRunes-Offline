@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.DisableSelection
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +52,7 @@ import com.example.madodict.ui.theme.ContrastArchaicText
 import com.example.madodict.ui.theme.PageBodyText
 import com.example.madodict.wiki.data.repository.WikiItem
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.toLowerCase
 import com.example.madodict.appString
 
 
@@ -111,142 +114,152 @@ fun DetailScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                if(item.imagePath!=null){
-                    item {
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 70.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AssetImage(assetPath = item.imagePath,
-                                selectedLanguage)
-                        }
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = item.name,
-                            style = PageBodyText.copy(fontSize = 16.sp, letterSpacing = 1.5.sp),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+            SelectionContainer {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (item.imagePath != null) {
+                        item {
                             Box(
                                 modifier = Modifier
-                                    .size(10.dp)
-                                    .background(categoryColor, shape = CircleShape)
-                            )
-
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = when (item.category) {
-                                    1 -> "角色"
-                                    2 -> "魔女"
-                                    else -> "一般词条"
-                                },
-                                style = PageBodyText.copy(fontSize = 12.sp),
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 70.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                AssetImage(
+                                    assetPath = item.imagePath,
+                                    selectedLanguage
+                                )
+                            }
                         }
                     }
-                }
 
-                if(item.category==2 && item.enName!=null){
                     item {
+                        Spacer(modifier = Modifier.height(20.dp))
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = item.enName,
-                                style = ContrastArchaicText.copy(fontSize = 18.sp, letterSpacing = 2.sp),
+                                text = item.name,
+                                style = PageBodyText.copy(fontSize = 16.sp, letterSpacing = 1.5.sp),
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
+
+                            DisableSelection {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .background(categoryColor, shape = CircleShape)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = when (item.category) {
+                                            1 -> "角色"
+                                            2 -> "魔女"
+                                            else -> "一般词条"
+                                        },
+                                        style = PageBodyText.copy(fontSize = 12.sp),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                            }
                         }
                     }
-                }
-                if(item.enName!=null){
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "英文名： " + item.enName,
-                                style = PageBodyText.copy(
-                                    fontSize = 14.sp,
-                                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
-                                ),
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+
+                    if (item.category == 2 && item.enName != null) {
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = item.enName.uppercase(),
+                                    style = ContrastArchaicText.copy(fontSize = 18.sp, letterSpacing = 1.5.sp),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
                         }
                     }
-                }
-
-                item{
-                    Spacer(modifier = Modifier.height(8.dp))
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
-                        thickness = 2.dp
-                    )
-                }
-                item{
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ){
-                        Text(
-                            text = item.content,
-                            style = PageBodyText.copy(fontSize = 14.sp, letterSpacing = 1.5.sp),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                    if (item.enName != null) {
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "英文名： " + item.enName,
+                                    style = PageBodyText.copy(
+                                        fontSize = 14.sp,
+                                        fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                                    ),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                     }
-                }
 
-                if(item.externalLinks.isNotEmpty()){
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
                         HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
                             thickness = 2.dp
                         )
                     }
                     item {
                         Column(
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 20.dp, vertical = 10.dp),
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "外部链接：",
+                                text = item.content,
                                 style = PageBodyText.copy(fontSize = 14.sp, letterSpacing = 1.5.sp),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
-                            item.externalLinks.forEach { link ->
-                                Text(
-                                    text = link.label,
-                                    style = PageBodyText.copy(
-                                        fontSize = 14.sp,
-                                        letterSpacing = 1.5.sp,
-                                        textDecoration = TextDecoration.Underline
-                                    ),
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.clickable {
-                                        openExternalLink(context, link.url)
-                                    }
-                                )
+                        }
+                    }
+
+                    if (item.externalLinks.isNotEmpty()) {
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
+                                thickness = 2.dp
+                            )
+                        }
+                        item {
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                DisableSelection {
+                                    Text(
+                                        text = "外部链接：",
+                                        style = PageBodyText.copy(fontSize = 14.sp, letterSpacing = 1.5.sp),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                item.externalLinks.forEach { link ->
+                                    // 提示：链接文本在SelectionContainer中长按也会弹出复制框
+                                    Text(
+                                        text = link.label,
+                                        style = PageBodyText.copy(
+                                            fontSize = 14.sp,
+                                            letterSpacing = 1.5.sp,
+                                            textDecoration = TextDecoration.Underline
+                                        ),
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.clickable {
+                                            openExternalLink(context, link.url)
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -309,11 +322,6 @@ fun AssetImage(assetPath: String?, language: AppLanguage) {
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = 150.dp, max = 225.dp)
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(20.dp)
-            )
             .clip(RoundedCornerShape(20.dp))
     )
 }

@@ -240,7 +240,7 @@ fun SettingsScreen(
             }
             Spacer(modifier = Modifier.height(5.dp))
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
                 thickness = 2.dp
             )
             Spacer(modifier = Modifier.height(20.dp))
