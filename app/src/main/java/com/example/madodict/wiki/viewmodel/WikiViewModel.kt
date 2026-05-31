@@ -59,6 +59,14 @@ class WikiViewModel(
         _searchUiState.value = _searchUiState.value.copy(isFullSearch = enabled)
     }
 
+    fun clearLastViewedItem() {
+        _searchUiState.value = _searchUiState.value.copy(lastViewedItem = null)
+    }
+
+    fun setLastViewedItem(item: WikiItem) {
+        _searchUiState.value = _searchUiState.value.copy(lastViewedItem = item)
+    }
+
     fun search() {
         val state = _searchUiState.value
         val keyword = state.keyword.trim()
@@ -99,39 +107,8 @@ class WikiViewModel(
         }
     }
 
-    // 详情页操作
-    fun loadDetail(entryId: String) {
-        viewModelScope.launch {
-            _detailUiState.value = DetailUiState.Loading
-            _detailUiState.value = try {
-                val item = repository.getById(entryId)
-                if (item != null) {
-                    // 加载成功时同步记录为"上次浏览"
-                    _searchUiState.value = _searchUiState.value.copy(lastViewedItem = item)
-                    DetailUiState.Success(item)
-                } else {
-                    DetailUiState.Error("条目不存在")
-                }
-            } catch (e: Exception) {
-                DetailUiState.Error(e.message ?: "加载失败")
-            }
-        }
-    }
-
     // 列表页返回搜索页时重置列表状态
     fun resetListState() {
         _listUiState.value = ListUiState.Idle
-    }
-}
-
-class WikiViewModelFactory(
-    private val repository: WikiRepository
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(WikiViewModel::class.java)) {
-            return WikiViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
 }

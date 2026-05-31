@@ -1,6 +1,7 @@
 package com.example.madodict.wiki.WikiScreen
 
 import android.R.attr.checked
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -280,8 +282,18 @@ fun SearchScreen(
                             color = MaterialTheme.colorScheme.primary,
                             style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp),
                             textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.clickable(
-                                onClick = { /* TODO: 直接跳转至上次打开的条目 */ },
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    searchUiState.lastViewedItem?.let { onShowDetail(it) }
+                                },
+                                onLongClick = {
+                                    viewModel.clearLastViewedItem()
+                                    Toast.makeText(
+                                        context,
+                                        appString(context, language, R.string.wiki_last_reading_cleared),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             )
                         )
                     }

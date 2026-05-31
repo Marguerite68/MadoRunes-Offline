@@ -45,7 +45,7 @@
     <string name="wiki_random">Random</string>
     <string name="wiki_all">All</string>
     <string name="all">(All)</string>
-    <string name="continue_last_reading">Continue last reading: </string>
+    <string name="continue_last_reading">Continue last reading:  </string>
     <string name="wiki_search_condition">keywords: %1$s, full-text search: %2$s</string>
     <string name="wiki_entry_num">Found %1$s results</string>
     <string name="loading">Loading…</string>
@@ -56,4 +56,5 @@
     <string name="fts">Full-text search</string>
     <string name="on">on</string>
     <string name="off">off</string>
+    <string name="wiki_last_reading_cleared">Last reading record cleared</string>
 </resources>

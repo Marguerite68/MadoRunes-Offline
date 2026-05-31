@@ -46,7 +46,7 @@
     <string name="wiki_random">随机条目</string>
     <string name="wiki_all">所有条目</string>
     <string name="all">(所有)</string>
-    <string name="continue_last_reading">继续上次的浏览: </string>
+    <string name="continue_last_reading">继续上次的浏览:  </string>
     <string name="wiki_search_condition">关键词：%1$s，全文搜索：%2$s</string>
     <string name="wiki_entry_num">查找到 %1$s 条结果</string>
     <string name="loading">加载中…</string>
@@ -57,4 +57,5 @@
     <string name="fts">全文搜索</string>
     <string name="on">开</string>
     <string name="off">关</string>
+    <string name="wiki_last_reading_cleared">已清除上次浏览记录</string>
 </resources>

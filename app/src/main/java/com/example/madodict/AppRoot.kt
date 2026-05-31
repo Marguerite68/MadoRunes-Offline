@@ -104,6 +104,7 @@ fun AppRoot(
                         },
                         onItemClick = { item ->
                             selectedWikiItem = item
+                            wikiViewModel.setLastViewedItem(item)
                             detailBackTarget = WikiScreenType.List
                             wikiScreen = WikiScreenType.Detail
                         }
@@ -133,6 +134,7 @@ fun AppRoot(
                             },
                             onShowDetail = { item ->
                                 selectedWikiItem = item
+                                wikiViewModel.setLastViewedItem(item)
                                 detailBackTarget = WikiScreenType.Search
                                 wikiScreen = WikiScreenType.Detail
                             }
@@ -153,6 +155,7 @@ fun AppRoot(
                         },
                         onShowDetail = { item ->
                             selectedWikiItem = item
+                            wikiViewModel.setLastViewedItem(item)
                             detailBackTarget = WikiScreenType.Search
                             wikiScreen = WikiScreenType.Detail
                         }

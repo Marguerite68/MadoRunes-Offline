@@ -47,7 +47,7 @@
     <string name="wiki_random">ランダム</string>
     <string name="wiki_all">すべて</string>
     <string name="all">(すべて)</string>
-    <string name="continue_last_reading">前回の閲覧を続ける </string>
+    <string name="continue_last_reading">前回の閲覧を続ける  </string>
     <string name="wiki_search_condition">キーワード: %1$s、全文検索: %2$s</string>
     <string name="wiki_entry_num">%1$s件の結果が見つかりました</string>
     <string name="loading">読み込み中…</string>
@@ -58,4 +58,5 @@
     <string name="fts">全文検索</string>
     <string name="on">オン</string>
     <string name="off">オフ</string>
+    <string name="wiki_last_reading_cleared">前回の閲覧記録がクリアされました</string>
 </resources>
