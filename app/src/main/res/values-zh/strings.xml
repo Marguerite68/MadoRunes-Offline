@@ -50,7 +50,7 @@
     <string name="wiki_search_condition">关键词：%1$s，全文搜索：%2$s</string>
     <string name="wiki_entry_num">查找到 %1$s 条结果</string>
     <string name="loading">加载中…</string>
-    <string name="searching_warning">界面跳转异常，请返回查询页面重试</string>
+    <string name="searching_warning">界面跳转异常，请返回搜索页面重试，你可以前往本软件的开源仓库issue页反馈此问题</string>
     <string name="wiki_list_end">没有更多了哦</string>
     <string name="wiki_no_results">没有找到相关条目</string>
     <string name="wiki_img_loading_error">图片加载失败</string>

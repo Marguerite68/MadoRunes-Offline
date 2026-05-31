@@ -110,7 +110,9 @@ fun ListScreen(
                     painter = painterResource(id = R.drawable.search),
                     contentDescription = "Search",
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.clickable { onBackToSearch() }.size(27.dp)
+                    modifier = Modifier
+                        .clickable { onBackToSearch() }
+                        .size(27.dp)
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -251,8 +253,8 @@ fun ListItem(
                 indication = ripple(
                     bounded = true
                 ),
-            onClick = { onClick(item) },
-        ),
+                onClick = { onClick(item) },
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Spacer(modifier = Modifier.width(4.dp))
