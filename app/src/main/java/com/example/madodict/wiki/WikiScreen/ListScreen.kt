@@ -136,7 +136,7 @@ fun ListScreen(
             }
             Spacer(modifier = Modifier.height(14.dp))
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.2f),
                 thickness = 2.dp
             )
 
@@ -190,24 +190,39 @@ fun ListScreen(
                         if(state.items.isNotEmpty()) {
                             item {
                                 Spacer(modifier = Modifier.height(20.dp))
-                                Text(
-                                    text = appString(context, selectedLanguage, R.string.wiki_entry_num, searchCount),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-                                    style = InfoAndBottomBarLabelText,
-                                    modifier = Modifier.padding(start = 16.dp)
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    val entryText = if(searchCount == 1 && selectedLanguage == AppLanguage.EN) {
+                                        appString(context, selectedLanguage, R.string.wiki_entry_num_one)
+                                    }
+                                    else {
+                                        appString(context, selectedLanguage, R.string.wiki_entry_num, searchCount)
+                                    }
+
+                                    Text(
+                                        text = entryText,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                                        style = InfoAndBottomBarLabelText
+                                    )
+                                }
                                 Spacer(modifier = Modifier.height(10.dp))
                             }
                         }
                         else {
                             item {
                                 Spacer(modifier = Modifier.height(20.dp))
-                                Text(
-                                    text = appString(context, selectedLanguage, R.string.wiki_no_results),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
-                                    style = InfoAndBottomBarLabelText,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = appString(context, selectedLanguage, R.string.wiki_no_results),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                                        style = InfoAndBottomBarLabelText
+                                    )
+                                }
                                 Spacer(modifier = Modifier.height(10.dp))
                             }
                         }

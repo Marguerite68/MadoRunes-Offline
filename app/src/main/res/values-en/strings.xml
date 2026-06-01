@@ -41,7 +41,6 @@
     <string name="converter_export_hint">* Line breaks automatically added due to display area limitations, except for user-inputted line breaks, are not counted in the conversion result.</string>
     <string name="wiki_greeting">What do you want to know today?</string>
     <string name="wiki_search_hint">Please enter keywords to search</string>
-    <string name="wiki_no_result">No relevant entries found</string>
     <string name="wiki_random">Random</string>
     <string name="wiki_all">All</string>
     <string name="all">(All)</string>

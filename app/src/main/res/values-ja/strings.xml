@@ -43,7 +43,6 @@
     <string name="converter_export_hint">* ユーザーが入力した改行を除き、表示領域の制限で自動的に追加された改行は変換結果に含まれません</string>
     <string name="wiki_greeting">今日は何を知りたいですか？</string>
     <string name="wiki_search_hint">キーワードを入力して検索してください</string>
-    <string name="wiki_no_result">関連するエントリが見つかりませんでした</string>
     <string name="wiki_random">ランダム</string>
     <string name="wiki_all">すべて</string>
     <string name="all">(すべて)</string>
