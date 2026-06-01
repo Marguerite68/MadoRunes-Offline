@@ -12,6 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,6 +30,7 @@ import com.example.madodict.wiki.data.json.ItemJsonParser
 import com.example.madodict.wiki.data.repository.WikiItem
 import com.example.madodict.wiki.data.repository.WikiRepository
 import com.example.madodict.wiki.data.sync.ItemSyncManager
+import com.example.madodict.wiki.viewmodel.WikiViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,13 +45,13 @@ fun AppRoot(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var selectedTab by rememberSaveable { mutableStateOf(0) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     var showBootScreen by rememberSaveable { mutableStateOf(true) }
     var converterInputText by remember { mutableStateOf("") }
     var converterFont by remember { mutableStateOf(WitchFontType.ANCIENT) }
-    var converterSize by remember { mutableStateOf(15) }
+    var converterSize by remember { mutableIntStateOf(15) }
     var converterColorHex by remember { mutableStateOf("6E6488") }
-    var converterSpacingMultiplier by remember { mutableStateOf(1.0f) }
+    var converterSpacingMultiplier by remember { mutableFloatStateOf(1.0f) }
 
     var wikiScreen by rememberSaveable { mutableStateOf(WikiScreenType.Search) }
     var listSearchKeyword by rememberSaveable { mutableStateOf("") }
@@ -59,13 +62,15 @@ fun AppRoot(
     val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
     var reloadInProgress by remember { mutableStateOf(false) }
     var reloadDialogVisible by remember { mutableStateOf(false) }
-    var reloadDone by remember { mutableStateOf(0) }
-    var reloadTotal by remember { mutableStateOf(0) }
+    var reloadDone by remember { mutableIntStateOf(0) }
+    var reloadTotal by remember { mutableIntStateOf(0) }
 
     val wikiDao = remember { WikiDatabase.getInstance(context).encyclopediaDao() }
     val wikiRepository = remember { WikiRepository(wikiDao) }
-    val wikiViewModel = remember { com.example.madodict.wiki.viewmodel.WikiViewModel(wikiRepository) }
+    val wikiViewModel = remember { WikiViewModel(wikiRepository) }
     val listUiState by wikiViewModel.listUiState.collectAsState()
+
+    // 数据库重载的处理
     val onReloadDatabase: () -> Unit = onReloadDatabase@{
         if (reloadInProgress) return@onReloadDatabase
         reloadInProgress = true
@@ -85,6 +90,7 @@ fun AppRoot(
         }
     }
 
+    // 维基页面切换时重置状态的处理
     val onTabSelectedHandler: (Int) -> Unit = { tab ->
         selectedTab = tab
         if (tab == 2) {
@@ -99,11 +105,13 @@ fun AppRoot(
         selectedTab = 0
     }
 
+    // 启动画面
     if (showBootScreen) {
         BootScreen()
         return
     }
 
+    // 数据库重载对话框
     if (reloadDialogVisible) {
         val progressValue = if (reloadTotal > 0) reloadDone.toFloat() / reloadTotal else null
         AlertDialog(
@@ -138,6 +146,7 @@ fun AppRoot(
         )
     }
 
+    // 主界面内容，根据selectedTab和wikiScreen的状态来决定显示哪个页面
     when (selectedTab) {
         0 -> DictionaryScreen(
             runeEntries = defaultRuneEntries,

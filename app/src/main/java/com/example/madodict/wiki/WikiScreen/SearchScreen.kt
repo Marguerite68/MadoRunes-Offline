@@ -1,6 +1,5 @@
 package com.example.madodict.wiki.WikiScreen
 
-import android.R.attr.checked
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,12 +51,12 @@ import com.example.madodict.appString
 import com.example.madodict.ui.theme.PageTitle
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.room.Fts3
 import com.example.madodict.ui.theme.InfoAndBottomBarLabelText
 import com.example.madodict.ui.theme.SettingLabelText
 import com.example.madodict.wiki.data.db.VersionRecordsEntity
 import com.example.madodict.wiki.data.db.WikiDao
 import com.example.madodict.wiki.data.db.WikiItemEntity
+import com.example.madodict.wiki.data.repository.WikiItem
 import com.example.madodict.wiki.data.repository.WikiRepository
 import com.example.madodict.wiki.viewmodel.WikiViewModel
 
@@ -69,7 +68,7 @@ fun SearchScreen(
     viewModel: WikiViewModel,
     onReloadDatabase: () -> Unit = {},
     onShowList: (String, Boolean, Boolean) -> Unit = { _, _, _ -> },
-    onShowDetail: (com.example.madodict.wiki.data.repository.WikiItem) -> Unit = {}
+    onShowDetail: (WikiItem) -> Unit = {}
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current

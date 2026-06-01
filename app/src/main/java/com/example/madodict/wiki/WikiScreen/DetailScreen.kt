@@ -118,6 +118,9 @@ fun DetailScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    item{
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                     if (item.imagePath != null) {
                         item {
                             Box(
