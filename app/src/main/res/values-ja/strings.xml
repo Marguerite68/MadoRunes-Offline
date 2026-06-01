@@ -54,13 +54,13 @@
     <string name="searching_warning">インターフェースの遷移が異常です。クエリページに戻って再試行してください。この問題を報告するには、このソフトウェアのオープンソースリポジトリのissueページにアクセスできます。</string>
     <string name="wiki_list_end">これ以上ありませんよ</string>
     <string name="wiki_no_results">関連するエントリが見つかりませんでした</string>
-    <string name="wiki_img_loading_error">画像の読み込みに失敗しました</string>
+    <string name="wiki_img_loading_error">画像の読み込みに失敗しました。このエントリの問題を報告することができます。</string>
     <string name="fts">全文検索</string>
     <string name="on">オン</string>
     <string name="off">オフ</string>
     <string name="wiki_last_reading_cleared">前回の閲覧記録がクリアされました</string>
-    <string name="db_reload">データベースをリロード</string>
-    <string name="db_reload_success">データベースが正常にリロードされました</string>
+    <string name="db_reload">百科データをリロード</string>
+    <string name="db_reload_success">百科データが正常にリロードされました</string>
     <string name="close">閉じる</string>
     <string name="preparing_db">データベースを準備しています…</string>
 </resources>

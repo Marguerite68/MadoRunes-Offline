@@ -246,7 +246,6 @@ fun DetailScreen(
                                     )
                                 }
                                 item.externalLinks.forEach { link ->
-                                    // 提示：链接文本在SelectionContainer中长按也会弹出复制框
                                     Text(
                                         text = link.label,
                                         style = PageBodyText.copy(
@@ -298,20 +297,28 @@ fun AssetImage(assetPath: String?, language: AppLanguage) {
     }
 
     if (bitmap == null) {
-        Text(
-            text = appString(context, language, R.string.wiki_img_loading_error),
-            style = PageBodyText.copy(fontSize = 12.sp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 150.dp, max = 225.dp)
-                .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .padding(8.dp)
-        )
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.warning),
+                contentDescription = "Warning",
+                tint = Color(0xFFFAAD14),
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = appString(context, language, R.string.wiki_img_loading_error),
+                style = PageBodyText.copy(fontSize = 12.sp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 100.dp, max = 225.dp)
+                    .padding(8.dp)
+            )
+        }
         return
     }
 
@@ -321,7 +328,7 @@ fun AssetImage(assetPath: String?, language: AppLanguage) {
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 150.dp, max = 225.dp)
+            .heightIn(min = 175.dp, max = 225.dp)
             .clip(RoundedCornerShape(20.dp))
     )
 }

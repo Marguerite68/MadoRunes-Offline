@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -55,6 +56,7 @@ fun AppRoot(
     var listIsFts by rememberSaveable { mutableStateOf(false) }
     var detailBackTarget by rememberSaveable { mutableStateOf(WikiScreenType.Search) }
     var selectedWikiItem by remember { mutableStateOf<WikiItem?>(null) }
+    val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
     var reloadInProgress by remember { mutableStateOf(false) }
     var reloadDialogVisible by remember { mutableStateOf(false) }
     var reloadDone by remember { mutableStateOf(0) }
@@ -169,6 +171,7 @@ fun AppRoot(
                         searchKeyword = listSearchKeyword,
                         isAllResults = listIsAll,
                         isFts = listIsFts,
+                        listState = listState,
                         onBackToSearch = {
                             wikiScreen = WikiScreenType.Search
                             wikiViewModel.resetListState()
@@ -252,3 +255,4 @@ private enum class WikiScreenType {
     List,
     Detail
 }
+

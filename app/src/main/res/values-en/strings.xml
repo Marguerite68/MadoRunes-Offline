@@ -52,13 +52,13 @@
     <string name="searching_warning">Interface transition is abnormal. Please return to the query page and try again. You can go to the issue page of the open source repository of this software to report this problem.</string>
     <string name="wiki_list_end">No more entries</string>
     <string name="wiki_no_results">No relevant entries found</string>
-    <string name="wiki_img_loading_error">Image loading failed</string>
+    <string name="wiki_img_loading_error">Image loading failed. You can choose to report the problem of this entry.</string>
     <string name="fts">Full-text search</string>
     <string name="on">on</string>
     <string name="off">off</string>
     <string name="wiki_last_reading_cleared">Last reading record cleared</string>
-    <string name="db_reload">Reload database</string>
-    <string name="db_reload_success">Database reloaded successfully</string>
+    <string name="db_reload">Reload wiki data</string>
+    <string name="db_reload_success">wiki data reloaded successfully</string>
     <string name="close">Close</string>
     <string name="preparing_db">Preparing database…</string>
 </resources>

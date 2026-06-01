@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -58,7 +60,8 @@ fun ListScreen(
     isAllResults: Boolean = false,
     onBackToSearch: () -> Unit = {},
     onItemClick: (WikiItem) -> Unit = {},
-    isFts: Boolean = false
+    isFts: Boolean = false,
+    listState: LazyListState = rememberLazyListState()
 ) {
     val context = LocalContext.current
 
@@ -136,7 +139,6 @@ fun ListScreen(
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
                 thickness = 2.dp
             )
-            Spacer(modifier = Modifier.height(20.dp))
 
             when (val state = listUiState) {
                 is ListUiState.Loading -> {
@@ -174,7 +176,11 @@ fun ListScreen(
                 is ListUiState.Success -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
+                        state = listState
                     ) {
+                        item() {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                         items(state.items.size) { index ->
                             ListItem(item = state.items[index], onClick = onItemClick)
                             if (index < state.items.size - 1) {
