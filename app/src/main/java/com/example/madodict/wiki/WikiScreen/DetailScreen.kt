@@ -331,7 +331,7 @@ fun AssetImage(assetPath: String?, language: AppLanguage) {
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 175.dp, max = 225.dp)
+            .heightIn(min = 175.dp, max = 250.dp)
             .clip(RoundedCornerShape(20.dp))
     )
 }
