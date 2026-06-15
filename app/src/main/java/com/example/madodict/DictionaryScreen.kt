@@ -1,6 +1,8 @@
 package com.example.madodict
 
 import android.content.res.Configuration
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,16 +23,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -71,6 +75,10 @@ fun DictionaryScreen(
 
     val context = LocalContext.current
 
+    val introText1 = remember(language) { appString(context, language, R.string.dict_intro_para1) }
+    val introText2 = remember(language) { appString(context, language, R.string.dict_intro_para2) }
+    val introText3 = remember(language) { appString(context, language, R.string.dict_intro_para3) }
+
     Scaffold(
         bottomBar = {
             BottomBar(
@@ -88,7 +96,7 @@ fun DictionaryScreen(
         ) {
             item {
                 Text(
-                    text = "Dictionary", //固定显示
+                    text = "Dictionary",
                     style = PageTitle,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     letterSpacing = 3.sp
@@ -99,7 +107,7 @@ fun DictionaryScreen(
 
             item {
                 Text(
-                    text = appString(context, language, R.string.dict_intro_para1),
+                    text = introText1,   // ← 用缓存值
                     style = PageBodyText,
                     letterSpacing = 1.5.sp
                 )
@@ -109,7 +117,7 @@ fun DictionaryScreen(
 
             item {
                 Text(
-                    text = appString(context, language, R.string.dict_intro_para2),
+                    text = introText2,   // ← 用缓存值
                     style = PageBodyText,
                     letterSpacing = 1.5.sp
                 )
@@ -119,7 +127,7 @@ fun DictionaryScreen(
 
             item {
                 Text(
-                    text = appString(context, language, R.string.dict_intro_para3),
+                    text = introText3,   // ← 用缓存值
                     style = PageBodyText,
                     letterSpacing = 1.5.sp
                 )
@@ -142,10 +150,23 @@ fun DictionaryScreen(
 }
 
 @Composable
-fun RuneTable(entries: List<RuneEntry>,
-              language: AppLanguage
+fun RuneTable(
+    entries: List<RuneEntry>,
+    language: AppLanguage
 ) {
     val context = LocalContext.current
+
+    val headerCells = remember(language) {
+        listOf(
+            appString(context, language, R.string.column_and_row_name),
+            appString(context, language, R.string.ancient_font_name),
+            appString(context, language, R.string.modern_font_name),
+            appString(context, language, R.string.musical_font_name),
+            appString(context, language, R.string.gothic_font_name)
+        )
+    }
+
+    val totalRows = remember(entries) { entries.size + 1 }
 
     Box(
         modifier = Modifier
@@ -168,14 +189,10 @@ fun RuneTable(entries: List<RuneEntry>,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             RuneRow(
-                cells = listOf(appString(context, language, R.string.column_and_row_name),
-                    appString(context, language, R.string.ancient_font_name),
-                    appString(context, language, R.string.modern_font_name),
-                    appString(context, language, R.string.musical_font_name),
-                    appString(context, language, R.string.gothic_font_name)),
+                cells = headerCells,   // ← 用缓存值
                 isHeader = true,
                 rowIndex = 0,
-                totalRows = entries.size + 1,
+                totalRows = totalRows,
                 appLanguage = language
             )
             entries.forEachIndexed { rowIndex, entry ->
@@ -189,7 +206,7 @@ fun RuneTable(entries: List<RuneEntry>,
                     ),
                     isHeader = false,
                     rowIndex = rowIndex + 1,
-                    totalRows = entries.size + 1,
+                    totalRows = totalRows,
                     appLanguage = language
                 )
             }
@@ -240,14 +257,35 @@ fun RowScope.RuneCell(
     appLanguage: AppLanguage
 ) {
     val usesStressBackground = isHeader || isLatinColumn
+
     val bgColor = if (usesStressBackground) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onPrimary
+    val outlineVariantColor = MaterialTheme.colorScheme.outlineVariant
+
     val cornerRadius = 20.dp
-    val shape = RoundedCornerShape(
-        topStart = if (rowIndex == 0 && columnIndex == 0) cornerRadius else 0.dp,
-        topEnd = if (rowIndex == 0 && columnIndex == totalColumns - 1) cornerRadius else 0.dp,
-        bottomStart = if (rowIndex == totalRows - 1 && columnIndex == 0) cornerRadius else 0.dp,
-        bottomEnd = if (rowIndex == totalRows - 1 && columnIndex == totalColumns - 1) cornerRadius else 0.dp
-    )
+
+    val shape = remember(rowIndex, columnIndex, totalRows, totalColumns) {
+        RoundedCornerShape(
+            topStart = if (rowIndex == 0 && columnIndex == 0) cornerRadius else 0.dp,
+            topEnd = if (rowIndex == 0 && columnIndex == totalColumns - 1) cornerRadius else 0.dp,
+            bottomStart = if (rowIndex == totalRows - 1 && columnIndex == 0) cornerRadius else 0.dp,
+            bottomEnd = if (rowIndex == totalRows - 1 && columnIndex == totalColumns - 1) cornerRadius else 0.dp
+        )
+    }
+
+    val textStyle = remember(text, isHeader, isLatinColumn, columnIndex, appLanguage) {
+        val baseStyle = when {
+            text == null -> ContrastHanLatinText
+            isHeader -> ContrastHanLatinText
+            isLatinColumn -> ContrastHanLatinText
+            else -> textStyleByColumnIndex[columnIndex] ?: ContrastArchaicText
+        }
+        when {
+            appLanguage != AppLanguage.ZH && isHeader -> baseStyle.copy(fontSize = 9.sp)
+            else -> baseStyle
+        }
+    }
+
+    val displayText = text ?: "/"
 
     Box(
         modifier = Modifier
@@ -255,30 +293,17 @@ fun RowScope.RuneCell(
             .aspectRatio(1f)
             .border(
                 width = 2.5.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
+                color = outlineVariantColor,
                 shape = shape
             )
             .clip(shape)
             .background(bgColor),
         contentAlignment = Alignment.Center
     ) {
-        val displayText = text ?: "/"
-        val textStyle = when {
-            text == null -> ContrastHanLatinText
-            isHeader -> ContrastHanLatinText
-            isLatinColumn -> ContrastHanLatinText
-            else -> textStyleByColumnIndex[columnIndex]
-                ?: ContrastArchaicText
-        }
-        val finalTextStyle = when {
-            appLanguage != AppLanguage.ZH && isHeader -> textStyle.copy(fontSize = 9.sp)
-            else -> textStyle
-        }
-
         Text(
             text = displayText,
             textAlign = TextAlign.Center,
-            style = finalTextStyle,
+            style = textStyle,
             modifier = Modifier.padding(2.dp)
         )
     }
@@ -351,33 +376,40 @@ val defaultRuneEntries = listOf(
     RuneEntry("9", "9", "9", null, "9")
 )
 
-private fun Modifier.customShadow(
+// Paint对象移到至drawBehind lambda外
+fun Modifier.customShadow(
     color: Color,
     blurRadius: Dp,
     offsetX: Dp,
     offsetY: Dp,
     cornerRadius: Dp
-): Modifier = drawBehind {
-    val paint = Paint()
-    val frameworkPaint = paint.asFrameworkPaint()
-    frameworkPaint.isAntiAlias = true
-    frameworkPaint.color = android.graphics.Color.TRANSPARENT
-    frameworkPaint.setShadowLayer(
-        blurRadius.toPx(),
-        offsetX.toPx(),
-        offsetY.toPx(),
-        color.toArgb()
-    )
+): Modifier = composed {
+    val density = LocalDensity.current
 
-    drawIntoCanvas { canvas ->
-        canvas.nativeCanvas.drawRoundRect(
-            0f,
-            0f,
-            size.width,
-            size.height,
-            cornerRadius.toPx(),
-            cornerRadius.toPx(),
-            frameworkPaint
-        )
+    val paint = remember(color, blurRadius, offsetX, offsetY, density) {
+        val blurPx = with(density) { blurRadius.toPx() }
+        val offsetXPx = with(density) { offsetX.toPx() }
+        val offsetYPx = with(density) { offsetY.toPx() }
+
+        Paint().apply {
+            isAntiAlias = true
+            this.color = android.graphics.Color.TRANSPARENT
+            setShadowLayer(blurPx, offsetXPx, offsetYPx, color.toArgb())
+        }
+    }
+
+    val cornerRadiusPx = remember(cornerRadius, density) {
+        with(density) { cornerRadius.toPx() }
+    }
+
+    drawBehind {
+        drawIntoCanvas { canvas ->
+            canvas.nativeCanvas.drawRoundRect(
+                RectF(0f, 0f, size.width, size.height),
+                cornerRadiusPx,
+                cornerRadiusPx,
+                paint
+            )
+        }
     }
 }
