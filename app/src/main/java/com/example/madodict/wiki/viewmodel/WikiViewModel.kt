@@ -50,9 +50,17 @@ class WikiViewModel(
     private val _detailUiState = MutableStateFlow<DetailUiState>(DetailUiState.Idle)
     val detailUiState: StateFlow<DetailUiState> = _detailUiState.asStateFlow()
 
+    private val _currentFilter = MutableStateFlow(0)
+
+    val currentFilter: StateFlow<Int> = _currentFilter.asStateFlow()
+
     // 搜索页操作
     fun onKeywordChange(keyword: String) {
         _searchUiState.value = _searchUiState.value.copy(keyword = keyword)
+    }
+
+    fun setFilter(filter: Int) {
+        _currentFilter.value = filter
     }
 
     fun onFullSearchToggle(enabled: Boolean) {

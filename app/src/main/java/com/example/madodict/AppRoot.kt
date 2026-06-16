@@ -69,6 +69,7 @@ fun AppRoot(
     val wikiRepository = remember { WikiRepository(wikiDao) }
     val wikiViewModel = remember { WikiViewModel(wikiRepository) }
     val listUiState by wikiViewModel.listUiState.collectAsState()
+    val currentFilter by wikiViewModel.currentFilter.collectAsState()
 
     // 数据库重载的处理
     val onReloadDatabase: () -> Unit = onReloadDatabase@{
@@ -180,6 +181,8 @@ fun AppRoot(
                         searchKeyword = listSearchKeyword,
                         isAllResults = listIsAll,
                         isFts = listIsFts,
+                        currentFilter = currentFilter,
+                        onFilterChange = { wikiViewModel.setFilter(it) },
                         listState = listState,
                         onBackToSearch = {
                             wikiScreen = WikiScreenType.Search

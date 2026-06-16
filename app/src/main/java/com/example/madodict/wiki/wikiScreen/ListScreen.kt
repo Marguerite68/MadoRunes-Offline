@@ -21,6 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,28 +62,30 @@ fun ListScreen(
     onBackToSearch: () -> Unit = {},
     onItemClick: (WikiItem) -> Unit = {},
     isFts: Boolean = false,
-    listState: LazyListState = rememberLazyListState()
+    listState: LazyListState = rememberLazyListState(),
+    currentFilter: Int = 0,
+    onFilterChange: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
 
-    var selectedLanguage by remember { mutableStateOf(language) }
+    var selectedLanguage by rememberSaveable { mutableStateOf(language) }
 
     val finalSearchCondition: String = when {
         isAllResults || searchKeyword.isBlank() -> {
             val allText = appString(context, selectedLanguage, R.string.all)
-            if (allText.length > 10) allText.substring(0, 10) + "..." else allText
+            if (allText.length > 7) allText.substring(0, 7) + "..." else allText
         }
 
         else -> {
-            if (searchKeyword.length > 10) {
-                searchKeyword.substring(0, 10) + "..."
+            if (searchKeyword.length > 7) {
+                searchKeyword.substring(0, 7) + "..."
             } else {
                 searchKeyword
             }
         }
     }
 
-    val searchCount = (listUiState as? ListUiState.Success)?.items?.size ?: 0
+    
 
     val ftsFlag = if(isFts) {
         appString(context, selectedLanguage, R.string.on)
@@ -88,6 +93,8 @@ fun ListScreen(
     else {
         appString(context, selectedLanguage, R.string.off)
     }
+
+    var filterMenuExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -139,20 +146,95 @@ fun ListScreen(
                     style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
                 )
 
-                Row() {
-                    Icon(
-                        painter = painterResource(id = R.drawable.filter),
-                        contentDescription = "Filter",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(15.dp)
+                Box {
+                    Row(
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { filterMenuExpanded = true }
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.filter),
+                            contentDescription = "Filter",
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
 
-                    )
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(
-                        text = appString(context, selectedLanguage, R.string.filter),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
-                    )
+                        val filterLabel = when (currentFilter) {
+                            1 -> "角色"
+                            2 -> "魔女"
+                            3 -> "词条"
+                            else -> appString(context, selectedLanguage, R.string.filter)
+                        }
+
+                        Text(
+                            text = filterLabel,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = filterMenuExpanded,
+                        onDismissRequest = { filterMenuExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("关闭") },
+                            onClick = {
+                                onFilterChange(0)
+                                filterMenuExpanded = false
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .background(Color(0xFFFFB7C5), shape = CircleShape)
+                                )
+                            },
+                            text = { Text("角色") },
+                            onClick = {
+                                onFilterChange(1)
+                                filterMenuExpanded = false
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .background(Color(0xFFD9D9D9), shape = CircleShape)
+                                )
+                            },
+                            text = { Text("魔女") },
+                            onClick = {
+                                onFilterChange(2)
+                                filterMenuExpanded = false
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            leadingIcon = {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .background(Color(0xFF70838F), shape = CircleShape)
+                                )
+                            },
+                            text = { Text("词条") },
+                            onClick = {
+                                onFilterChange(3)
+                                filterMenuExpanded = false
+                            }
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(14.dp))
@@ -195,6 +277,16 @@ fun ListScreen(
                     }
                 }
                 is ListUiState.Success -> {
+                    val displayItems = remember(state.items, currentFilter) {
+                        when (currentFilter) {
+                            0 -> state.items
+                            1 -> state.items.filter { it.category == 1 }
+                            2 -> state.items.filter { it.category == 2 }
+                            3 -> state.items.filter { it.category == 3 }
+                            else -> state.items
+                        }
+                    }
+
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         state = listState
@@ -202,24 +294,25 @@ fun ListScreen(
                         item() {
                             Spacer(modifier = Modifier.height(10.dp))
                         }
-                        items(state.items.size) { index ->
-                            ListItem(item = state.items[index], onClick = onItemClick)
-                            if (index < state.items.size - 1) {
+                        items(displayItems.size) { index ->
+                            ListItem(item = displayItems[index], onClick = onItemClick)
+                            if (index < displayItems.size - 1) {
                                 Spacer(modifier = Modifier.height(8.dp))
                             }
                         }
-                        if(state.items.isNotEmpty()) {
+                        if(displayItems.isNotEmpty()) {
                             item {
                                 Spacer(modifier = Modifier.height(20.dp))
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
-                                    val entryText = if(searchCount == 1 && selectedLanguage == AppLanguage.EN) {
+                                    val filteredCount = displayItems.size
+                                    val entryText = if(filteredCount == 1 && selectedLanguage == AppLanguage.EN) {
                                         appString(context, selectedLanguage, R.string.wiki_entry_num_one)
                                     }
                                     else {
-                                        appString(context, selectedLanguage, R.string.wiki_entry_num, searchCount)
+                                        appString(context, selectedLanguage, R.string.wiki_entry_num, filteredCount)
                                     }
 
                                     Text(
