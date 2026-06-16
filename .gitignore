@@ -1,18 +1,26 @@
+# Android Studio
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.gradle/
 local.properties
-/local
-/app/debug
-/app/release
+
+# IDEA
+.idea/
+
+# Build outputs
+build/
+app/build/
+
+# Release artifacts
+app/release/
+app/debug/
+
+# APK
+*.apk
+*.aab
+*.apks
+
+# Dynamic delivery metadata
+*.dm
+
+# customize
+local/
