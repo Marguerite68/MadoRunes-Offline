@@ -62,4 +62,5 @@
     <string name="db_reload_success">百科データが正常にリロードされました</string>
     <string name="close">閉じる</string>
     <string name="preparing_db">データベースを準備しています…</string>
+    <string name="filter">フィルター</string>
 </resources>

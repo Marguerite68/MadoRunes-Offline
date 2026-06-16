@@ -22,9 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.madodict.wiki.WikiScreen.DetailScreen
-import com.example.madodict.wiki.WikiScreen.ListScreen
-import com.example.madodict.wiki.WikiScreen.SearchScreen
+import com.example.madodict.wiki.wikiScreen.DetailScreen
+import com.example.madodict.wiki.wikiScreen.ListScreen
+import com.example.madodict.wiki.wikiScreen.SearchScreen
 import com.example.madodict.wiki.data.db.WikiDatabase
 import com.example.madodict.wiki.data.json.ItemJsonParser
 import com.example.madodict.wiki.data.repository.WikiItem

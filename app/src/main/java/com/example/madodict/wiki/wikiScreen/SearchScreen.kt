@@ -1,4 +1,4 @@
-package com.example.madodict.wiki.WikiScreen
+package com.example.madodict.wiki.wikiScreen
 
 import android.widget.Toast
 import androidx.compose.foundation.background

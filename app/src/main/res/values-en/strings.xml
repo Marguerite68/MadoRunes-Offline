@@ -60,4 +60,5 @@
     <string name="db_reload_success">wiki data reloaded successfully</string>
     <string name="close">Close</string>
     <string name="preparing_db">Preparing database…</string>
+    <string name="filter">Filter</string>
 </resources>

@@ -62,4 +62,5 @@
     <string name="db_reload_success">数据重载成功</string>
     <string name="close">关闭</string>
     <string name="preparing_db">正在准备数据库…</string>
+    <string name="filter">筛选</string>
 </resources>

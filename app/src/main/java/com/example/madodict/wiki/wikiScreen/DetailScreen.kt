@@ -1,11 +1,10 @@
-package com.example.madodict.wiki.WikiScreen
+package com.example.madodict.wiki.wikiScreen
 
 import android.content.Intent
 import android.net.Uri
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,7 +51,6 @@ import com.example.madodict.ui.theme.ContrastArchaicText
 import com.example.madodict.ui.theme.PageBodyText
 import com.example.madodict.wiki.data.repository.WikiItem
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.toLowerCase
 import com.example.madodict.appString
 
 

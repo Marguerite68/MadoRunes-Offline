@@ -1,13 +1,11 @@
-package com.example.madodict.wiki.WikiScreen
+package com.example.madodict.wiki.wikiScreen
 
-import android.R.attr.color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,10 +65,19 @@ fun ListScreen(
 
     var selectedLanguage by remember { mutableStateOf(language) }
 
-    val searchCondition: String = when {
-        isAllResults -> appString(context, selectedLanguage, R.string.all)
-        searchKeyword.isNotBlank() -> searchKeyword
-        else -> appString(context, selectedLanguage, R.string.all)
+    val finalSearchCondition: String = when {
+        isAllResults || searchKeyword.isBlank() -> {
+            val allText = appString(context, selectedLanguage, R.string.all)
+            if (allText.length > 10) allText.substring(0, 10) + "..." else allText
+        }
+
+        else -> {
+            if (searchKeyword.length > 10) {
+                searchKeyword.substring(0, 10) + "..."
+            } else {
+                searchKeyword
+            }
+        }
     }
 
     val searchCount = (listUiState as? ListUiState.Success)?.items?.size ?: 0
@@ -127,12 +134,26 @@ fun ListScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.wiki_search_condition, searchCondition,ftsFlag),
+                    text = appString(context, selectedLanguage, R.string.wiki_search_condition, finalSearchCondition,ftsFlag),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
                 )
 
+                Row() {
+                    Icon(
+                        painter = painterResource(id = R.drawable.filter),
+                        contentDescription = "Filter",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(15.dp)
 
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = appString(context, selectedLanguage, R.string.filter),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(14.dp))
             HorizontalDivider(
