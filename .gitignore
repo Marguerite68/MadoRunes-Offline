@@ -22,5 +22,5 @@ app/debug/
 # Dynamic delivery metadata
 *.dm
 
-# customize
+# customize ingore rules
 local/

@@ -183,7 +183,7 @@ fun ListScreen(
                         onDismissRequest = { filterMenuExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("关闭") },
+                            text = { Text("默认") },
                             onClick = {
                                 onFilterChange(0)
                                 filterMenuExpanded = false
