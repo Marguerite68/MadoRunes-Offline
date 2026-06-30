@@ -1,0 +1,15 @@
+{
+    "id": "0020",
+    "category": 2,
+    "enName": "Raspberry",
+    "name": "评论家的魔女",
+    "imagePath": "0020_Raspberry.png",
+    "content": "出现在《魔法纪录》中的一种魔女。性质是权威。\n\n热心于区分事物有无价值的魔女。如果没有价值就用木桩刺穿，如果有价值就用花朵装饰，但魔女除了自身以外几乎不向任何事物献花。判断标准不明。结界中充满了被木桩捣烂的物与人残留的光彩。",
+    "externalLinks": [
+      {
+        "label": "魔法纪录中文Wiki",
+        "url": "https://magireco.moe/wiki/%E7%8B%B1%E9%97%A8%E7%9A%84%E9%AD%94%E5%A5%B3"
+      }
+    ],
+    "version": 1
+  }
