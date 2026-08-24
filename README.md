@@ -38,7 +38,7 @@
 
 ## 预览
 
- <img src="./art/pv1.jpg" width="240" alt="BootScreen"/>  <img src="./art/pv2.jpg" width="240" alt="Converter & Languages"/>  <img src="./art/pv3.jpg" width="240" alt="Dual Themes"/> <img src="./art/pv4.jpg" width="240" alt="Wiki"/>
+ <img src="./art/pv1.jpg" width="240" alt="BootScreen"/>  <img src="./art/pv2.jpg" width="240" alt="Converter & Languages"/>  <img src="./art/pv3.jpg" width="240" alt="Dual Themes"/> <img src="./art/pv4.jpg" width="240" alt="Wiki"/> <img src="./art/pv5.jpg" width="240" alt="Preview 5"/> <img src="./art/pv6.jpg" width="240" alt="Preview 6"/>
 
  ---
 
@@ -50,7 +50,7 @@
   
  推荐系统版本： Android 13或以上
 
-## 词条投稿方式
+ ## 词条投稿方式
 
  将词条建议发送至邮箱：
  sekaibest@outlook.com
