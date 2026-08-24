@@ -2,7 +2,7 @@
 
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android)](https://www.android.com)
 [![Compose](https://img.shields.io/badge/UI-Jetpack_Compose-4285F4?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
-[![License](https://img.shields.io/badge/License-CC_BY--NC_4.0-E57373)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![License](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-E57373)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 
 <p align="center">
   <img src="./art/ic_launcher.png" width="128" height="128" alt="MadoRunes Offline Icon"/>
@@ -16,7 +16,7 @@
 
 ## 简介
 
-**魔法字典** 是一款向《魔法少女小圆》致敬的同人衍生 Android 应用。本应用的数据与字体资源完全本地离线化，为用户提供魔女文字符对照、文本转换与词条查询功能。
+**魔法字典** 是一款向《魔法少女小圆》致敬的同人衍生 Android 应用。本应用的数据与字体资源完全本地离线化，为用户提供魔女文字符对照、文本转换与离线百科查询功能，无需网络连接即可使用。
 
 本应用参照原版 Web 端设计：[madorunes.cn](https://www.madorunes.cn) | 仓库链接：[Madoka-Runes](https://github.com/BlackCoder0/BlackCoder0)
 
@@ -38,7 +38,7 @@
 
 ## 预览
 
- <img src="./art/pv1.jpg" width="240" alt="BootScreen"/>  <img src="./art/pv2.jpg" width="240" alt="Converter & Languages"/>  <img src="./art/pv3.jpg" width="240" alt="Dual Themes"/> <img src="./art/pv4.jpg" width="240" alt="Offline Wiki"/><img src="./art/pv5.jpg" width="240" alt="Wiki Entry"/><img src="./art/pv6.jpg" width="240" alt="Multiple Languages and themes"/>
+ <img src="./art/pv1.jpg" width="240" alt="BootScreen"/>  <img src="./art/pv2.jpg" width="240" alt="Converter & Languages"/>  <img src="./art/pv3.jpg" width="240" alt="Dual Themes"/> <img src="./art/pv4.jpg" width="240" alt="Wiki"/>
 
  ---
 
@@ -47,10 +47,10 @@
  于Release页面下载意向版本的安装包即可
 
  最低系统版本： Android 8.1
- 
+  
  推荐系统版本： Android 13或以上
 
- ## 词条投稿方式
+## 词条投稿方式
 
  将词条建议发送至邮箱：
  sekaibest@outlook.com
@@ -63,5 +63,4 @@
     - 相关图片（如有）
     - 参考链接/资料（如有）
 
-  邮件主题请注明“madodictWiki词条投稿+词条名称”，以便作者及时处理。
-
+  邮件主题请注明"madodictWiki词条投稿+词条名称"，以便作者及时处理。
