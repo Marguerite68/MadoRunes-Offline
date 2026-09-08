@@ -24,3 +24,6 @@ app/debug/
 
 # customize ingore rules
 local/
+
+# Local encyclopedia review workspace
+.review/

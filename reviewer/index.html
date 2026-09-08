@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>魔法字典 · 条目审核台</title>
+  <link rel="icon" href="../art/ic_launcher.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="../art/ic_launcher.png" alt="魔法字典" class="brand-icon">
+        <div>
+          <p class="eyebrow">MADORUNES OFFLINE</p>
+          <h1>条目管理台</h1>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="icon-button" id="themeButton" type="button" aria-label="切换深浅主题" title="切换深浅主题">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg>
+        </button>
+        <button class="button button-secondary" id="reloadButton" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66L20 8.68M20 4v4.68h-4.68"/></svg>
+          重新读取
+        </button>
+        <button class="button button-primary" id="openWorkspaceButton" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7.5Zm0 0v-2a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/></svg>
+          选择 .review 文件夹
+        </button>
+        <label class="button button-primary fallback-import" id="fallbackImportLabel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5h6l2 2h10v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7.5Zm0 0v-2a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v2"/></svg>
+          导入审核目录
+          <input id="fallbackDirectoryInput" type="file" webkitdirectory multiple hidden>
+        </label>
+      </div>
+    </header>
+
+    <section class="summary-strip" aria-label="审核概览">
+      <div class="workspace-status">
+        <span class="status-beacon" id="workspaceBeacon"></span>
+        <div>
+          <p class="summary-label">当前工作区</p>
+          <p class="workspace-name" id="workspaceName">尚未选择目录</p>
+        </div>
+      </div>
+      <div class="summary-metrics">
+        <button class="metric active" type="button" data-filter="all">
+          <span class="metric-value" id="countAll">0</span>
+          <span class="metric-label">全部</span>
+        </button>
+        <button class="metric" type="button" data-filter="pending">
+          <span class="metric-value" id="countPending">0</span>
+          <span class="metric-label">待审核</span>
+        </button>
+        <button class="metric" type="button" data-filter="approved">
+          <span class="metric-value" id="countApproved">0</span>
+          <span class="metric-label">已通过</span>
+        </button>
+        <button class="metric" type="button" data-filter="rejected">
+          <span class="metric-value" id="countRejected">0</span>
+          <span class="metric-label">已拒绝</span>
+        </button>
+        <button class="metric warning-metric" type="button" data-filter="issues">
+          <span class="metric-value" id="countIssues">0</span>
+          <span class="metric-label">有问题</span>
+        </button>
+      </div>
+    </section>
+
+    <main class="workspace-grid">
+      <aside class="panel entry-panel">
+        <div class="panel-header entry-panel-header">
+          <div>
+            <p class="panel-kicker">ENTRY QUEUE</p>
+            <h2>条目列表</h2>
+          </div>
+          <span class="result-count" id="resultCount">0 条</span>
+        </div>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="searchInput" type="search" placeholder="搜索名称、ID 或文件名" autocomplete="off">
+        </div>
+        <div class="entry-list" id="entryList"></div>
+      </aside>
+
+      <section class="panel preview-panel">
+        <div class="panel-header preview-header">
+          <div>
+            <p class="panel-kicker">APP PREVIEW</p>
+            <h2>内容展示</h2>
+          </div>
+          <span class="status-pill status-pending" id="activeStatus">待审核</span>
+        </div>
+
+        <div class="preview-stage" id="previewStage">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-orbit">
+              <span></span><span></span><span></span>
+            </div>
+            <h3>从待审核目录开始</h3>
+            <p>选择项目下的 <code>.review</code> 文件夹，工作台会自动配对 JSON 与同名图片。</p>
+            <button class="button button-primary empty-open-button" id="emptyOpenButton" type="button">选择文件夹</button>
+          </div>
+
+          <article class="phone-preview hidden" id="phonePreview">
+            <div class="phone-topline">
+              <span class="back-mark">‹</span>
+              <span id="previewTopName">词条名称</span>
+              <span class="phone-dots">•••</span>
+            </div>
+            <div class="phone-scroll">
+              <div class="preview-image-wrap checkerboard">
+                <img id="previewImage" alt="词条图片预览">
+                <div class="missing-image hidden" id="missingImage">图片缺失</div>
+              </div>
+              <div class="title-row">
+                <h3 id="previewName">词条名称</h3>
+                <span class="category-label"><i id="categoryDot"></i><span id="previewCategory">一般词条</span></span>
+              </div>
+              <p class="rune-name" id="previewRuneName"></p>
+              <p class="english-name" id="previewEnglishName"></p>
+              <div class="app-divider"></div>
+              <div class="entry-content" id="previewContent"></div>
+              <div class="external-links hidden" id="previewLinksWrap">
+                <div class="app-divider"></div>
+                <p class="links-label">外部链接：</p>
+                <div id="previewLinks"></div>
+              </div>
+            </div>
+            <nav class="phone-bottom" aria-label="App 底部导航预览">
+              <span>字典</span><span>转换</span><span class="selected">百科</span><span>设置</span>
+            </nav>
+          </article>
+        </div>
+
+        <div class="review-actions hidden" id="reviewActions">
+          <button class="button action-reject" id="rejectButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+            拒绝
+          </button>
+          <button class="button action-pending" id="pendingButton" type="button">恢复待审核</button>
+          <button class="button action-approve" id="approveButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+            通过
+          </button>
+        </div>
+      </section>
+
+      <aside class="panel inspector-panel">
+        <div class="panel-header inspector-header">
+          <div>
+            <p class="panel-kicker">SOURCE INSPECTOR</p>
+            <h2>原始文件</h2>
+          </div>
+          <button class="text-button" id="saveJsonButton" type="button" disabled>保存 JSON</button>
+        </div>
+
+        <div class="inspector-empty" id="inspectorEmpty">
+          <p>选择一个词条后，可在这里核对 JSON 原文与图片细节。</p>
+        </div>
+
+        <div class="inspector-content hidden" id="inspectorContent">
+          <section class="validation-card" id="validationCard">
+            <div class="validation-heading">
+              <span class="validation-icon" id="validationIcon">✓</span>
+              <div>
+                <h3 id="validationTitle">校验通过</h3>
+                <p id="validationSummary">文件配对与字段格式正常</p>
+              </div>
+            </div>
+            <ul id="validationList"></ul>
+          </section>
+
+          <section class="inspector-section">
+            <div class="section-heading">
+              <div>
+                <p class="panel-kicker">JSON</p>
+                <h3 id="jsonFileName">—</h3>
+              </div>
+              <span class="file-size" id="jsonFileSize">—</span>
+            </div>
+            <textarea id="jsonEditor" spellcheck="false" aria-label="JSON 原始内容"></textarea>
+            <p class="editor-hint">可直接修改内容；保存前会重新校验 JSON。</p>
+          </section>
+
+          <section class="inspector-section image-inspector">
+            <div class="section-heading">
+              <div>
+                <p class="panel-kicker">IMAGE</p>
+                <h3 id="imageFileName">—</h3>
+              </div>
+              <span class="file-size" id="imageFileSize">—</span>
+            </div>
+            <div class="source-image-wrap checkerboard">
+              <img id="sourceImage" alt="原始图片">
+              <div class="missing-image hidden" id="sourceMissingImage">没有匹配图片</div>
+            </div>
+            <div class="image-meta">
+              <span id="imageDimensions">尺寸 —</span>
+              <span id="imageFormat">格式 —</span>
+              <span id="imageTransparency">透明度 —</span>
+            </div>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+
+  <dialog id="confirmDialog">
+    <form method="dialog" class="dialog-card">
+      <p class="panel-kicker">CONFIRM MOVE</p>
+      <h2 id="dialogTitle">条目去向？</h2>
+      <p id="dialogMessage"></p>
+      <div class="dialog-actions">
+        <button class="button button-secondary" value="cancel">取消</button>
+        <button class="button button-primary" id="dialogConfirmButton" value="confirm">确认</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
