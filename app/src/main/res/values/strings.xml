@@ -9,7 +9,7 @@
     <string name="settings_author_format">创作者: %1$s</string>
     <string name="settings_repo_label">仓库: </string>
     <string name="settings_repo_name">GitHub</string>
-    <string name="settings_license_notice">遵循CC BY-NC 4.0协议，严禁商用</string>
+    <string name="settings_license_notice">遵循 PolyForm Noncommercial License 1.0.0，严禁商用</string>
     <string name="settings_links_header">友情链接/参考：</string>
     <string name="settings_link_madorunes">魔女文网站</string>
     <string name="settings_link_moegirl">萌娘百科</string>
