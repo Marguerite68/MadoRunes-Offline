@@ -64,3 +64,11 @@
     - 参考链接/资料（如有）
 
   邮件主题请注明"madodictWiki词条投稿+词条名称"，以便作者及时处理。
+
+## 使用 Skill 自动整理词条
+
+仓库提供了 [madorunes-entry-curation](./skill/madorunes-entry-curation/SKILL.md) Skill，供维护者在 Codex 中批量检索、整理并准备离线百科词条。加载该 Skill 后，可使用 `$madorunes-entry-curation` 启动工作流。
+
+Skill 会维护待添加条目表、优先检索 Wiki 资料与高质量图片，并生成待审核的 JSON 和图片。所有候选内容只会写入 `.review/pending/`，不会直接修改正式的 `app/src/main/assets/`；审核通过后，再由维护者决定是否导入正式资源。
+
+词条计划、来源链接、图片尺寸和压缩结果会在每批整理结束时汇总，便于审核与发布管理。

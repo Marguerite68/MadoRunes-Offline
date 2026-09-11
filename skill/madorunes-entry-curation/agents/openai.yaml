@@ -1,0 +1,4 @@
+interface:
+  display_name: "MadoRunes 词条整理"
+  short_description: "收集、整理并审核 MadoRunes 离线百科词条"
+  default_prompt: "Use $madorunes-entry-curation to initialize or prepare the next MadoRunes entry-review batch."
