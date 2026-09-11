@@ -75,7 +75,7 @@ fun BootScreen() {
                 .padding(bottom = 20.dp)
         ) {
             Text(
-                text = "Version 1.1.1b / This application follows the PolyForm Noncommercial License 1.0.0",
+                text = "Version 1.1.2b / This application follows the PolyForm Noncommercial License 1.0.0",
                 style = SplashFooter,
                 color = LightBottomText,
                 letterSpacing = 0.5.sp,
