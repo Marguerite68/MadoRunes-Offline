@@ -1,10 +1,13 @@
 package com.example.madodict
 
 import android.content.res.Configuration
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -25,13 +26,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.madodict.ui.theme.ContrastArchaicText
@@ -129,55 +135,28 @@ fun DictionaryScreen(
 
             item { Spacer(modifier = Modifier.height(24.dp)) }
 
-            runeTableItems(runeEntries, language)
-        }
-    }
-}
-
-/**
- * Adds the table a row at a time so LazyColumn can compose only the rows near
- * the viewport. Keeping the entire table in one item made every cell compose
- * and measure during tab navigation.
- */
-private fun LazyListScope.runeTableItems(
-    entries: List<RuneEntry>,
-    language: AppLanguage
-) {
-    val totalRows = entries.size + 1
-
-    item(key = "rune-table-header", contentType = "rune-table-row") {
-        RuneTableRowFrame(isFirst = true, isLast = entries.isEmpty()) {
-            RuneRow(
-                cells = runeHeaderCells(language),
-                isHeader = true,
-                rowIndex = 0,
-                totalRows = totalRows,
-                appLanguage = language
-            )
-        }
-    }
-
-    itemsIndexed(
-        items = entries,
-        key = { index, entry -> "rune-table-${entry.latin ?: "empty"}-$index" },
-        contentType = { _, _ -> "rune-table-row" }
-    ) { rowIndex, entry ->
-        RuneTableRowFrame(isFirst = false, isLast = rowIndex == entries.lastIndex) {
-            RuneRow(
-                cells = entry.cells(),
-                isHeader = false,
-                rowIndex = rowIndex + 1,
-                totalRows = totalRows,
-                appLanguage = language
-            )
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    RuneTable(entries = runeEntries, language = language)
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun runeHeaderCells(language: AppLanguage): List<String?> {
+fun RuneTable(
+    entries: List<RuneEntry>,
+    language: AppLanguage
+) {
     val context = LocalContext.current
-    return remember(language) {
+
+    val headerCells = remember(language) {
         listOf(
             appString(context, language, R.string.column_and_row_name),
             appString(context, language, R.string.ancient_font_name),
@@ -186,87 +165,54 @@ private fun runeHeaderCells(language: AppLanguage): List<String?> {
             appString(context, language, R.string.gothic_font_name)
         )
     }
-}
 
-@Composable
-private fun RuneTableRowFrame(
-    isFirst: Boolean,
-    isLast: Boolean,
-    content: @Composable () -> Unit
-) {
-    val shape = RoundedCornerShape(
-        topStart = if (isFirst) 36.dp else 0.dp,
-        topEnd = if (isFirst) 36.dp else 0.dp,
-        bottomStart = if (isLast) 36.dp else 0.dp,
-        bottomEnd = if (isLast) 36.dp else 0.dp
-    )
+    val totalRows = remember(entries) { entries.size + 1 }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .clip(shape)
+            .customShadow(
+                color = Color.Black.copy(alpha = 0.26f),
+                blurRadius = 6.dp,
+                offsetX = 0.dp,
+                offsetY = 0.dp,
+                cornerRadius = 36.dp
+            )
+            .border(
+                width = 3.5.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(35.dp)
+            )
+            .clip(RoundedCornerShape(36.dp))
             .background(MaterialTheme.colorScheme.onPrimary)
-            .tableFrameOutline(
-                isFirst = isFirst,
-                isLast = isLast,
-                color = MaterialTheme.colorScheme.outline
-            )
-            .padding(
-                start = 18.dp,
-                top = if (isFirst) 18.dp else 0.dp,
-                end = 18.dp,
-                bottom = if (isLast) 18.dp else 2.dp
-            )
+            .padding(18.dp)
     ) {
-        content()
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            RuneRow(
+                cells = headerCells,   // ← 用缓存值
+                isHeader = true,
+                rowIndex = 0,
+                totalRows = totalRows,
+                appLanguage = language
+            )
+            entries.forEachIndexed { rowIndex, entry ->
+                RuneRow(
+                    cells = listOf(
+                        entry.latin,
+                        entry.ancient,
+                        entry.modern,
+                        entry.music,
+                        entry.gothic
+                    ),
+                    isHeader = false,
+                    rowIndex = rowIndex + 1,
+                    totalRows = totalRows,
+                    appLanguage = language
+                )
+            }
+        }
     }
 }
-
-private fun Modifier.tableFrameOutline(
-    isFirst: Boolean,
-    isLast: Boolean,
-    color: Color
-): Modifier = drawBehind {
-    val strokeWidth = 3.5.dp.toPx()
-    val halfStroke = strokeWidth / 2
-    val cornerRadius = 35.dp.toPx()
-    val top = if (isFirst) halfStroke else 0f
-    val bottom = if (isLast) size.height - halfStroke else size.height
-
-    drawLine(
-        color = color,
-        start = Offset(halfStroke, top),
-        end = Offset(halfStroke, bottom),
-        strokeWidth = strokeWidth
-    )
-    drawLine(
-        color = color,
-        start = Offset(size.width - halfStroke, top),
-        end = Offset(size.width - halfStroke, bottom),
-        strokeWidth = strokeWidth
-    )
-    if (isFirst) {
-        drawLine(
-            color = color,
-            start = Offset(cornerRadius, halfStroke),
-            end = Offset(size.width - cornerRadius, halfStroke),
-            strokeWidth = strokeWidth
-        )
-    }
-    if (isLast) {
-        drawLine(
-            color = color,
-            start = Offset(cornerRadius, size.height - halfStroke),
-            end = Offset(size.width - cornerRadius, size.height - halfStroke),
-            strokeWidth = strokeWidth
-        )
-    }
-}
-
-private fun RuneEntry.cells(): List<String?> = listOf(latin, ancient, modern, music, gothic)
-
-private val columnWeights = listOf(0.205f, 0.205f, 0.205f, 0.205f, 0.205f)
 
 @Composable
 fun RuneRow(
@@ -276,6 +222,8 @@ fun RuneRow(
     totalRows: Int,
     appLanguage: AppLanguage
 ) {
+    val columnWeights = listOf(0.205f, 0.205f, 0.205f, 0.205f, 0.205f)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(2.dp)
@@ -427,3 +375,41 @@ val defaultRuneEntries = listOf(
     RuneEntry("8", "8", "8", null, "8"),
     RuneEntry("9", "9", "9", null, "9")
 )
+
+// Paint对象移到至drawBehind lambda外
+fun Modifier.customShadow(
+    color: Color,
+    blurRadius: Dp,
+    offsetX: Dp,
+    offsetY: Dp,
+    cornerRadius: Dp
+): Modifier = composed {
+    val density = LocalDensity.current
+
+    val paint = remember(color, blurRadius, offsetX, offsetY, density) {
+        val blurPx = with(density) { blurRadius.toPx() }
+        val offsetXPx = with(density) { offsetX.toPx() }
+        val offsetYPx = with(density) { offsetY.toPx() }
+
+        Paint().apply {
+            isAntiAlias = true
+            this.color = android.graphics.Color.TRANSPARENT
+            setShadowLayer(blurPx, offsetXPx, offsetYPx, color.toArgb())
+        }
+    }
+
+    val cornerRadiusPx = remember(cornerRadius, density) {
+        with(density) { cornerRadius.toPx() }
+    }
+
+    drawBehind {
+        drawIntoCanvas { canvas ->
+            canvas.nativeCanvas.drawRoundRect(
+                RectF(0f, 0f, size.width, size.height),
+                cornerRadiusPx,
+                cornerRadiusPx,
+                paint
+            )
+        }
+    }
+}
