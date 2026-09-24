@@ -336,11 +336,11 @@ fun AssetImage(assetPath: String?, language: AppLanguage) {
 
 val sampleItem =
     WikiItem(
-        "0000",
+        "000000",
         2,
         "蔷薇的魔女 Gertrud",
         "Gertrud",
-        "0000_Gertrud.png",
+        "000000_Gertrud.png",
         "蔷薇的魔女，原名格特鲁德，是一位拥有强大力量的魔女。她以其独特的能力和神秘的背景而闻名于世。蔷薇的魔女在历史上留下了许多传说和故事，她的存在一直是人们津津乐道的话题。",
         externalLinks = emptyList(),
         version = 1

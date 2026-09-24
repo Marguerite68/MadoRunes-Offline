@@ -22,9 +22,11 @@
 JSON 与图片必须位于同一状态下对应的目录中，且除扩展名外文件名完全一致。例如：
 
 ```text
-pending/item/0021_Example.json
-pending/wikiImg/0021_Example.png
+pending/item/000021_Example.json
+pending/wikiImg/000021_Example.png
 ```
+
+条目编号固定为 6 位数字：前 2 位是类别码，后 4 位是该类别内的序号。目前 `00` 为魔女、`01` 为角色、`02` 为词条／术语；`03`–`99` 留给未来类别。
 
 ## 使用方式
 

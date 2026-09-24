@@ -4,13 +4,13 @@ Apply these instructions only to a MadoRunes Offline repository. Confirm the pro
 
 ## Entry namespaces and scope order
 
-Allocate IDs from the highest existing ID in the matching namespace. Keep IDs unique.
+Every entry ID has exactly six digits: a two-digit namespace code followed by a four-digit sequence local to that namespace. Allocate the next sequence from the highest existing ID in the matching namespace and keep IDs unique. The four-digit local sequence runs from `0000` through `9999`, so each namespace can contain 10,000 entries. Reserve namespace codes `03` through `99` for future entry types; when adding a type, register its code in the App parser and reviewer before creating entries.
 
-| Type | Prefix | Examples |
-| --- | --- | --- |
-| 魔女 | `00` | `0000`, `0001` |
-| 角色 | `01` | `0100`, `0101` |
-| 词条／术语 | `02` | `0200`, `0201` |
+| Type | Namespace | Full range | Examples |
+| --- | --- | --- | --- |
+| 魔女 | `00` | `000000`–`009999` | `000000`, `000001` |
+| 角色 | `01` | `010000`–`019999` | `010000`, `010001` |
+| 词条／术语 | `02` | `020000`–`029999` | `020000`, `020001` |
 
 Prioritize source material in this order:
 

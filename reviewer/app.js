@@ -8,6 +8,12 @@ const STATUS = Object.freeze({
 
 const IMAGE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "webp"]);
 const MAX_IMAGE_BYTES = 300 * 1024;
+const ENTRY_ID_PATTERN = /^\d{6}$/;
+const CATEGORY_BY_NAMESPACE = Object.freeze({
+  "00": 2,
+  "01": 1,
+  "02": 0
+});
 
 const state = {
   rootHandle: null,
@@ -197,12 +203,12 @@ async function importFallbackFiles(event) {
 async function loadDemoWorkspace() {
   try {
     const [jsonResponse, imageResponse] = await Promise.all([
-      fetch("../app/src/main/assets/item/0006_Elsa_Maria.json"),
-      fetch("../app/src/main/assets/wikiImg/0006_Elsa_Maria.png")
+      fetch("../app/src/main/assets/item/000006_Elsa_Maria.json"),
+      fetch("../app/src/main/assets/wikiImg/000006_Elsa_Maria.png")
     ]);
     if (!jsonResponse.ok || !imageResponse.ok) throw new Error("示例资源读取失败");
-    const jsonFile = new File([await jsonResponse.blob()], "0006_Elsa_Maria.json", { type: "application/json" });
-    const imageFile = new File([await imageResponse.blob()], "0006_Elsa_Maria.png", { type: "image/png" });
+    const jsonFile = new File([await jsonResponse.blob()], "000006_Elsa_Maria.json", { type: "application/json" });
+    const imageFile = new File([await imageResponse.blob()], "000006_Elsa_Maria.png", { type: "image/png" });
     state.entries = await pairFiles(
       [{ file: jsonFile, handle: null }],
       [{ file: imageFile, handle: null }],
@@ -321,7 +327,13 @@ function validateEntry(entry) {
   if (!entry.data) return issues;
 
   const data = entry.data;
-  if (typeof data.id !== "string" || !data.id.trim()) issues.push("id 必须是非空字符串");
+  if (typeof data.id !== "string" || !ENTRY_ID_PATTERN.test(data.id)) {
+    issues.push("id 必须是 6 位数字（2 位类别码 + 4 位类内序号）");
+  } else {
+    const expectedCategory = CATEGORY_BY_NAMESPACE[data.id.slice(0, 2)];
+    if (expectedCategory === undefined) issues.push("id 使用了尚未登记的类别码");
+    else if (data.category !== expectedCategory) issues.push(`id 类别码与 category 不一致（应为 ${expectedCategory}）`);
+  }
   if (![0, 1, 2].includes(data.category)) issues.push("category 必须是 0、1 或 2");
   if (typeof data.name !== "string" || !data.name.trim()) issues.push("name 必须是非空字符串");
   if (!(data.enName === null || typeof data.enName === "string")) issues.push("enName 必须是字符串或 null");

@@ -413,7 +413,7 @@ fun ListItem(
 
 val sampleItems = listOf(
     WikiItem(
-        "0001",
+        "000000",
         2,
         "蔷薇的魔女 Gertrud",
         "Gertrud",
@@ -423,7 +423,7 @@ val sampleItems = listOf(
         version = 1
     ),
     WikiItem(
-        "0002",
+        "010000",
         1,
         "鹿目圆 Kaname Madoka",
         "Kaname Madoka",
@@ -433,7 +433,7 @@ val sampleItems = listOf(
         version = 1
     ),
     WikiItem(
-        "0003",
+        "020000",
         0,
         "魔法少女小圆 Puella Magi Madoka Magica",
         "Puella Magi Madoka Magica",

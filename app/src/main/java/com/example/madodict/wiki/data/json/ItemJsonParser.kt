@@ -24,6 +24,12 @@ data class ExternalLinkJson(
 class ItemJsonParser(private val context: Context) {
 
     private val gson = Gson()
+    private val idPattern = Regex("^\\d{6}$")
+    private val categoryByNamespace = mapOf(
+        "00" to 2,
+        "01" to 1,
+        "02" to 0
+    )
 
     // 读取 assets/item/ 下所有JSON文件并解析
     // 返回成功解析的条目列表，解析失败的文件跳过并打印日志
@@ -47,6 +53,27 @@ class ItemJsonParser(private val context: Context) {
                         .bufferedReader()
                         .readText()
                     val entry = gson.fromJson(json, EntryJson::class.java)
+
+                    val expectedCategory = if (idPattern.matches(entry.id)) {
+                        categoryByNamespace[entry.id.take(2)]
+                    } else {
+                        null
+                    }
+                    val imagePathMatchesId = entry.imagePath == null ||
+                        entry.imagePath.startsWith("${entry.id}_")
+                    if (
+                        expectedCategory == null ||
+                        entry.category != expectedCategory ||
+                        !fileName.startsWith("${entry.id}_") ||
+                        !imagePathMatchesId
+                    ) {
+                        android.util.Log.w(
+                            "EntryJsonParser",
+                            "条目编号规则校验失败: id=${entry.id}, category=${entry.category}, " +
+                                "文件=$fileName, imagePath=${entry.imagePath}，已跳过"
+                        )
+                        return@forEach
+                    }
 
                     // id 唯一性校验
                     if (!seenIds.add(entry.id)) {
