@@ -18,6 +18,6 @@ Prepare reviewable MadoRunes Offline encyclopedia entries without changing relea
 
 Before initializing a plan or preparing a batch, read [the MadoRunes workflow reference](references/workflow.md). It defines the ID namespaces, source priority, review-plan spreadsheet, image requirements, and batch cadence.
 
-Use the repository's existing entries as the schema and content-style reference. Keep factual claims traceable through `externalLinks`; list every source actually used, regardless of whether it supplied prose or an image.
+Use the repository's existing entries as the schema and content-style reference. Keep factual claims traceable through `externalLinks`; list every source actually used at the article or introduction-page level, regardless of whether it supplied prose or an image. Do not include file-description pages or direct image/download URLs in source lists; record image sources using the corresponding article or introduction page.
 
 At the end of each batch, report what was prepared, validation results, image details, source links, newly queued candidates, and anything that needs user review.

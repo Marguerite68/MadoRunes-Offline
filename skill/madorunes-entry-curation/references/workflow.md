@@ -41,7 +41,7 @@ Use `https://moegirl.icu` and `https://magireco.moe` as the first sources for en
 
 Prefer clean character art with transparent backgrounds and no obvious outline. Treat a text-only entry as a last resort: use `"imagePath": null` only after reasonable searches across the two priority wikis and other appropriate sources fail to yield a suitable image.
 
-For every used prose or image source, add an `externalLinks` item to the JSON. Do not add type labels that distinguish prose from image sources; list both sources if they differ.
+For every used prose or image source, add the corresponding encyclopedia article, official introduction, or other content page to `externalLinks`. Do not add file-description pages (such as `File:...png`), direct PNG/JPEG/WebP URLs, CDN image URLs, or download links. Record image sources using the article or introduction page containing the image; when prose and image come from the same page, list that page only once. Do not add type labels that distinguish prose from image sources; list both content pages if they differ. Apply the same page-level source-link rule to batch reports. File URLs may still be used internally to retrieve or verify images, but must not appear in delivered source lists.
 
 For an entry with an image:
 
