@@ -44,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.madodict.wiki.data.WikiCategory
 import com.example.madodict.AppLanguage
 import com.example.madodict.BottomBar
 import com.example.madodict.R
@@ -62,12 +63,8 @@ fun DetailScreen(
     language: AppLanguage = AppLanguage.ZH,
     onBack: () -> Unit = {}
 ) {
-    val categoryColor = when (item.category) {
-        1 -> Color(0xFFFFB7C5) // 角色
-        2 -> Color(0xFFD9D9D9) // 魔女
-        else -> {Color(0xFF70838F) // 一般词条
-        }
-    }
+    val category = WikiCategory.fromValue(item.category) ?: WikiCategory.ENTRY
+    val categoryColor = Color(category.colorArgb)
 
     val context = LocalContext.current
 
@@ -160,11 +157,7 @@ fun DetailScreen(
 
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = when (item.category) {
-                                            1 -> "角色"
-                                            2 -> "魔女"
-                                            else -> "一般词条"
-                                        },
+                                        text = category.detailLabel,
                                         style = PageBodyText.copy(fontSize = 12.sp),
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
@@ -173,7 +166,7 @@ fun DetailScreen(
                         }
                     }
 
-                    if (item.category == 2 && item.enName != null) {
+                    if (category == WikiCategory.WITCH && item.enName != null) {
                         item {
                             Row(
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 4.dp),
@@ -337,7 +330,7 @@ fun AssetImage(assetPath: String?, language: AppLanguage) {
 val sampleItem =
     WikiItem(
         "000000",
-        2,
+        WikiCategory.WITCH.value,
         "蔷薇的魔女 Gertrud",
         "Gertrud",
         "000000_Gertrud.png",

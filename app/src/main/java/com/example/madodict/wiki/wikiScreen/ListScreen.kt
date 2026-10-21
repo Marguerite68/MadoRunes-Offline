@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.madodict.wiki.data.WikiCategory
 import com.example.madodict.AppLanguage
 import com.example.madodict.BottomBar
 import com.example.madodict.R
@@ -63,8 +64,8 @@ fun ListScreen(
     onItemClick: (WikiItem) -> Unit = {},
     isFts: Boolean = false,
     listState: LazyListState = rememberLazyListState(),
-    currentFilter: Int = 0,
-    onFilterChange: (Int) -> Unit = {}
+    currentFilter: WikiCategory? = null,
+    onFilterChange: (WikiCategory?) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -164,12 +165,8 @@ fun ListScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
 
-                        val filterLabel = when (currentFilter) {
-                            1 -> "角色"
-                            2 -> "魔女"
-                            3 -> "词条"
-                            else -> appString(context, selectedLanguage, R.string.filter)
-                        }
+                        val filterLabel = currentFilter?.label
+                            ?: appString(context, selectedLanguage, R.string.filter)
 
                         Text(
                             text = filterLabel,
@@ -185,55 +182,27 @@ fun ListScreen(
                         DropdownMenuItem(
                             text = { Text("默认") },
                             onClick = {
-                                onFilterChange(0)
+                                onFilterChange(null)
                                 filterMenuExpanded = false
                             }
                         )
 
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .background(Color(0xFFFFB7C5), shape = CircleShape)
-                                )
-                            },
-                            text = { Text("角色") },
-                            onClick = {
-                                onFilterChange(1)
-                                filterMenuExpanded = false
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .background(Color(0xFFD9D9D9), shape = CircleShape)
-                                )
-                            },
-                            text = { Text("魔女") },
-                            onClick = {
-                                onFilterChange(2)
-                                filterMenuExpanded = false
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            leadingIcon = {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .background(Color(0xFF70838F), shape = CircleShape)
-                                )
-                            },
-                            text = { Text("词条") },
-                            onClick = {
-                                onFilterChange(3)
-                                filterMenuExpanded = false
-                            }
-                        )
+                        WikiCategory.entries.forEach { category ->
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .background(Color(category.colorArgb), shape = CircleShape)
+                                    )
+                                },
+                                text = { Text(category.label) },
+                                onClick = {
+                                    onFilterChange(category)
+                                    filterMenuExpanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -278,13 +247,9 @@ fun ListScreen(
                 }
                 is ListUiState.Success -> {
                     val displayItems = remember(state.items, currentFilter) {
-                        when (currentFilter) {
-                            0 -> state.items
-                            1 -> state.items.filter { it.category == 1 }
-                            2 -> state.items.filter { it.category == 2 }
-                            3 -> state.items.filter { it.category == 3 }
-                            else -> state.items
-                        }
+                        val category = currentFilter
+                        if (category == null) state.items
+                        else state.items.filter { it.category == category.value }
                     }
 
                     LazyColumn(
@@ -372,12 +337,8 @@ fun ListItem(
     item: WikiItem,
     onClick: (WikiItem) -> Unit = {}
 ){
-    val categoryColor = when (item.category) {
-        1 -> Color(0xFFFFB7C5) // 角色
-        2 -> Color(0xFFD9D9D9) // 魔女
-        else -> {Color(0xFF70838F) // 一般词条
-        }
-    }
+    val category = WikiCategory.fromValue(item.category) ?: WikiCategory.ENTRY
+    val categoryColor = Color(category.colorArgb)
 
     Row(
         modifier = Modifier
@@ -414,7 +375,7 @@ fun ListItem(
 val sampleItems = listOf(
     WikiItem(
         "000000",
-        2,
+        WikiCategory.WITCH.value,
         "蔷薇的魔女 Gertrud",
         "Gertrud",
         null,
@@ -424,7 +385,7 @@ val sampleItems = listOf(
     ),
     WikiItem(
         "010000",
-        1,
+        WikiCategory.CHARACTER.value,
         "鹿目圆 Kaname Madoka",
         "Kaname Madoka",
         null,
@@ -434,7 +395,7 @@ val sampleItems = listOf(
     ),
     WikiItem(
         "020000",
-        0,
+        WikiCategory.ENTRY.value,
         "魔法少女小圆 Puella Magi Madoka Magica",
         "Puella Magi Madoka Magica",
         null,

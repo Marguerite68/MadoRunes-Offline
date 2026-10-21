@@ -1,6 +1,7 @@
 package com.example.madodict.wiki.data.json
 
 import android.content.Context
+import com.example.madodict.wiki.data.WikiCategory
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
@@ -25,11 +26,6 @@ class ItemJsonParser(private val context: Context) {
 
     private val gson = Gson()
     private val idPattern = Regex("^\\d{6}$")
-    private val categoryByNamespace = mapOf(
-        "00" to 2,
-        "01" to 1,
-        "02" to 0
-    )
 
     // 读取 assets/item/ 下所有JSON文件并解析
     // 返回成功解析的条目列表，解析失败的文件跳过并打印日志
@@ -55,7 +51,7 @@ class ItemJsonParser(private val context: Context) {
                     val entry = gson.fromJson(json, EntryJson::class.java)
 
                     val expectedCategory = if (idPattern.matches(entry.id)) {
-                        categoryByNamespace[entry.id.take(2)]
+                        WikiCategory.fromNamespace(entry.id.take(2))?.value
                     } else {
                         null
                     }
