@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,11 +68,9 @@ fun ListScreen(
 ) {
     val context = LocalContext.current
 
-    var selectedLanguage by rememberSaveable { mutableStateOf(language) }
-
     val finalSearchCondition: String = when {
         isAllResults || searchKeyword.isBlank() -> {
-            val allText = appString(context, selectedLanguage, R.string.all)
+            val allText = appString(context, language, R.string.all)
             if (allText.length > 7) allText.substring(0, 7) + "..." else allText
         }
 
@@ -89,10 +86,10 @@ fun ListScreen(
     
 
     val ftsFlag = if(isFts) {
-        appString(context, selectedLanguage, R.string.on)
+        appString(context, language, R.string.on)
     }
     else {
-        appString(context, selectedLanguage, R.string.off)
+        appString(context, language, R.string.off)
     }
 
     var filterMenuExpanded by remember { mutableStateOf(false) }
@@ -142,7 +139,7 @@ fun ListScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = appString(context, selectedLanguage, R.string.wiki_search_condition, finalSearchCondition,ftsFlag),
+                    text = appString(context, language, R.string.wiki_search_condition, finalSearchCondition,ftsFlag),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = InfoAndBottomBarLabelText.copy(fontSize = 12.sp)
                 )
@@ -165,8 +162,8 @@ fun ListScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
 
-                        val filterLabel = currentFilter?.label
-                            ?: appString(context, selectedLanguage, R.string.filter)
+                        val filterLabel = currentFilter?.let { appString(context, language, it.labelRes) }
+                            ?: appString(context, language, R.string.filter)
 
                         Text(
                             text = filterLabel,
@@ -180,7 +177,7 @@ fun ListScreen(
                         onDismissRequest = { filterMenuExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("默认") },
+                            text = { Text(appString(context, language, R.string.wiki_filter_default)) },
                             onClick = {
                                 onFilterChange(null)
                                 filterMenuExpanded = false
@@ -196,7 +193,7 @@ fun ListScreen(
                                             .background(Color(category.colorArgb), shape = CircleShape)
                                     )
                                 },
-                                text = { Text(category.label) },
+                                text = { Text(appString(context, language, category.labelRes)) },
                                 onClick = {
                                     onFilterChange(category)
                                     filterMenuExpanded = false
@@ -219,7 +216,7 @@ fun ListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = appString(context, selectedLanguage, R.string.loading),
+                            text = appString(context, language, R.string.loading),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = InfoAndBottomBarLabelText
                         )
@@ -273,11 +270,11 @@ fun ListScreen(
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     val filteredCount = displayItems.size
-                                    val entryText = if(filteredCount == 1 && selectedLanguage == AppLanguage.EN) {
-                                        appString(context, selectedLanguage, R.string.wiki_entry_num_one)
+                                    val entryText = if(filteredCount == 1 && language == AppLanguage.EN) {
+                                        appString(context, language, R.string.wiki_entry_num_one)
                                     }
                                     else {
-                                        appString(context, selectedLanguage, R.string.wiki_entry_num, filteredCount)
+                                        appString(context, language, R.string.wiki_entry_num, filteredCount)
                                     }
 
                                     Text(
@@ -297,7 +294,7 @@ fun ListScreen(
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = appString(context, selectedLanguage, R.string.wiki_no_results),
+                                        text = appString(context, language, R.string.wiki_no_results),
                                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
                                         style = InfoAndBottomBarLabelText
                                     )
@@ -321,7 +318,7 @@ fun ListScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = appString(context, selectedLanguage, R.string.searching_warning),
+                            text = appString(context, language, R.string.searching_warning),
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = InfoAndBottomBarLabelText
                         )

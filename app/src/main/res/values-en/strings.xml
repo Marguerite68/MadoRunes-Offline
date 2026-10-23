@@ -61,4 +61,9 @@
     <string name="close">Close</string>
     <string name="preparing_db">Preparing database…</string>
     <string name="filter">Filter</string>
+    <string name="wiki_filter_default">Default</string>
+    <string name="wiki_category_character">Character</string>
+    <string name="wiki_category_witch">Witch</string>
+    <string name="wiki_category_entry">Entry</string>
+    <string name="wiki_category_general_entry">General entry</string>
 </resources>

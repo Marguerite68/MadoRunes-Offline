@@ -63,4 +63,9 @@
     <string name="close">关闭</string>
     <string name="preparing_db">正在准备数据库…</string>
     <string name="filter">筛选</string>
+    <string name="wiki_filter_default">默认</string>
+    <string name="wiki_category_character">角色</string>
+    <string name="wiki_category_witch">魔女</string>
+    <string name="wiki_category_entry">词条</string>
+    <string name="wiki_category_general_entry">一般词条</string>
 </resources>

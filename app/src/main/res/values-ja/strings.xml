@@ -63,4 +63,9 @@
     <string name="close">閉じる</string>
     <string name="preparing_db">データベースを準備しています…</string>
     <string name="filter">フィルター</string>
+    <string name="wiki_filter_default">デフォルト</string>
+    <string name="wiki_category_character">キャラクター</string>
+    <string name="wiki_category_witch">魔女</string>
+    <string name="wiki_category_entry">項目</string>
+    <string name="wiki_category_general_entry">一般項目</string>
 </resources>

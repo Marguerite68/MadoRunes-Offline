@@ -1,17 +1,20 @@
 package com.example.madodict.wiki.data
 
-// 新增类型只需在这里增加一项；比如LOCATION("03", 3, "地点", 0xFF80CBC4),
+import androidx.annotation.StringRes
+import com.example.madodict.R
+
+// 新增类型时在这里增加一项，并补充对应的多语言字符串资源。
 // 声明顺序同时决定筛选菜单顺序。"全部"由null表示。
 enum class WikiCategory(
     val namespace: String,
     val value: Int,
-    val label: String,
+    @StringRes val labelRes: Int,
     val colorArgb: Long,
-    val detailLabel: String = label
+    @StringRes val detailLabelRes: Int = labelRes
 ) {
-    CHARACTER("01", 1, "角色", 0xFFFFB7C5),
-    WITCH("00", 2, "魔女", 0xFFD9D9D9),
-    ENTRY("02", 0, "词条", 0xFF70838F, "一般词条");
+    CHARACTER("01", 1, R.string.wiki_category_character, 0xFFFFB7C5),
+    WITCH("00", 2, R.string.wiki_category_witch, 0xFFD9D9D9),
+    ENTRY("02", 0, R.string.wiki_category_entry, 0xFF70838F, R.string.wiki_category_general_entry);
 
     companion object {
         fun fromNamespace(namespace: String): WikiCategory? =
