@@ -31,9 +31,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -78,8 +76,6 @@ fun SearchScreen(
     val hasLastRead = searchUiState.lastViewedItem != null
 
     val letterSpacingValue = if (language == AppLanguage.ZH) 2.sp else 0.sp
-
-    var ftsChecked by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = {
@@ -143,7 +139,7 @@ fun SearchScreen(
                             val keyword = searchUiState.keyword.trim()
                             if (keyword.isNotEmpty()) {
                                 viewModel.search()
-                                onShowList(keyword, false, ftsChecked)
+                                onShowList(keyword, false, searchUiState.isFullSearch)
                                 focusManager.clearFocus()
                             }
                         }
@@ -188,7 +184,7 @@ fun SearchScreen(
                                         val keyword = searchUiState.keyword.trim()
                                         if (keyword.isNotEmpty()) {
                                             viewModel.search()
-                                            onShowList(keyword, false, ftsChecked)
+                                            onShowList(keyword, false, searchUiState.isFullSearch)
                                         }
                                     }
                             )
@@ -210,11 +206,8 @@ fun SearchScreen(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Checkbox(
-                        checked = ftsChecked,
-                        onCheckedChange = { checked ->
-                            ftsChecked = checked
-                            viewModel.onFullSearchToggle(checked)
-                        },
+                        checked = searchUiState.isFullSearch,
+                        onCheckedChange = viewModel::onFullSearchToggle,
                         colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.primary,
                             uncheckedColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
@@ -276,7 +269,6 @@ fun SearchScreen(
                                 onClick = {
                                     viewModel.loadAll()
                                     viewModel.onFullSearchToggle(false)
-                                    ftsChecked = false
                                     onShowList("", true, false)
                                 }
                             )
