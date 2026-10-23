@@ -38,7 +38,7 @@ interface WikiDao {
     SELECT * FROM wiki_items
     WHERE content LIKE '%' || :keyword || '%'
     AND name NOT LIKE '%' || :keyword || '%'
-    AND enName NOT LIKE '%' || :keyword || '%'
+    AND (enName IS NULL OR enName NOT LIKE '%' || :keyword || '%')
     ORDER BY name ASC
 """)
     suspend fun searchByContent(keyword: String): List<WikiItemEntity>
