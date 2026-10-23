@@ -22,68 +22,65 @@ data class ExternalLinkJson(
     @SerializedName("url")   val url: String
 )
 
-class ItemJsonParser(private val context: Context) {
+class ItemJsonParser internal constructor(
+    private val listFiles: () -> Array<String>?,
+    private val readFile: (String) -> String
+) {
+    constructor(context: Context) : this(
+        listFiles = { context.assets.list("item") },
+        readFile = { fileName ->
+            context.assets.open("item/$fileName").bufferedReader().use { it.readText() }
+        }
+    )
 
     private val gson = Gson()
     private val idPattern = Regex("^\\d{6}$")
 
-    // 读取 assets/item/ 下所有JSON文件并解析
-    // 返回成功解析的条目列表，解析失败的文件跳过并打印日志
+    // 只有全部资源读取、解析和校验成功，才允许调用方据此更新或删除数据库条目。
     fun parseAll(): List<EntryJson> {
         val fileNames = try {
-            context.assets.list("item") ?: emptyArray()
+            checkNotNull(listFiles()) { "无法读取item目录" }
+                .filter { it.endsWith(".json") }
+                .also { check(it.isNotEmpty()) { "item目录没有JSON词条，拒绝清空数据库" } }
         } catch (e: Exception) {
-            android.util.Log.e("EntryJsonParser", "无法读取item目录", e)
-            return emptyList()
+            throw IllegalStateException("无法读取完整的item资源", e)
         }
 
         val results = mutableListOf<EntryJson>()
         val seenIds = mutableSetOf<String>()
 
-        fileNames
-            .filter { it.endsWith(".json") }
-            .forEach { fileName ->
-                try {
-                    val json = context.assets
-                        .open("item/$fileName")
-                        .bufferedReader()
-                        .readText()
-                    val entry = gson.fromJson(json, EntryJson::class.java)
-
-                    val expectedCategory = if (idPattern.matches(entry.id)) {
-                        WikiCategory.fromNamespace(entry.id.take(2))?.value
-                    } else {
-                        null
-                    }
-                    val imagePathMatchesId = entry.imagePath == null ||
-                        entry.imagePath.startsWith("${entry.id}_")
-                    if (
-                        expectedCategory == null ||
-                        entry.category != expectedCategory ||
-                        !fileName.startsWith("${entry.id}_") ||
-                        !imagePathMatchesId
-                    ) {
-                        android.util.Log.w(
-                            "EntryJsonParser",
-                            "条目编号规则校验失败: id=${entry.id}, category=${entry.category}, " +
-                                "文件=$fileName, imagePath=${entry.imagePath}，已跳过"
-                        )
-                        return@forEach
-                    }
-
-                    // id 唯一性校验
-                    if (!seenIds.add(entry.id)) {
-                        android.util.Log.w(
-                            "EntryJsonParser",
-                            "发现重复 id: ${entry.id}，文件: $fileName，已跳过"
-                        )
-                        return@forEach
-                    }
-                    results.add(entry)
-                } catch (e: Exception) {
-                    android.util.Log.e("EntryJsonParser", "解析失败: $fileName", e)
+        fileNames.forEach { fileName ->
+            try {
+                val entry = checkNotNull(gson.fromJson(readFile(fileName), EntryJson::class.java)) {
+                    "JSON词条不能为空"
                 }
+                // Gson可能将缺失的非空字段反序列化为null，必须在写入数据库前拒绝。
+                require(!entry.id.isNullOrBlank() && !entry.name.isNullOrBlank() &&
+                    !entry.content.isNullOrBlank()) { "词条缺少必要字段" }
+
+                val expectedCategory = if (idPattern.matches(entry.id)) {
+                    WikiCategory.fromNamespace(entry.id.take(2))?.value
+                } else {
+                    null
+                }
+                val imagePathMatchesId = entry.imagePath == null ||
+                    entry.imagePath.startsWith("${entry.id}_")
+                if (
+                    expectedCategory == null ||
+                    entry.category != expectedCategory ||
+                    !fileName.startsWith("${entry.id}_") ||
+                    !imagePathMatchesId
+                ) {
+                    error("条目编号规则校验失败: id=${entry.id}, category=${entry.category}, " +
+                        "文件=$fileName, imagePath=${entry.imagePath}")
+                }
+
+                check(seenIds.add(entry.id)) { "发现重复id: ${entry.id}，文件: $fileName" }
+                results.add(entry)
+            } catch (e: Exception) {
+                throw IllegalStateException("解析失败: $fileName", e)
             }
+        }
 
         return results
     }

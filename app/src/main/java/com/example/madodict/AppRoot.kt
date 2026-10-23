@@ -2,6 +2,7 @@ package com.example.madodict
 
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyListState
@@ -31,6 +32,8 @@ import com.example.madodict.wiki.data.repository.WikiItem
 import com.example.madodict.wiki.data.repository.WikiRepository
 import com.example.madodict.wiki.data.sync.ItemSyncManager
 import com.example.madodict.wiki.viewmodel.WikiViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -62,10 +65,12 @@ fun AppRoot(
     val listState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
     var reloadInProgress by remember { mutableStateOf(false) }
     var reloadDialogVisible by remember { mutableStateOf(false) }
+    var reloadFailed by remember { mutableStateOf(false) }
     var reloadDone by remember { mutableIntStateOf(0) }
     var reloadTotal by remember { mutableIntStateOf(0) }
 
-    val wikiDao = remember { WikiDatabase.getInstance(context).encyclopediaDao() }
+    val wikiDatabase = remember { WikiDatabase.getInstance(context) }
+    val wikiDao = remember { wikiDatabase.encyclopediaDao() }
     val wikiRepository = remember { WikiRepository(wikiDao) }
     val wikiViewModel = remember { WikiViewModel(wikiRepository) }
     val listUiState by wikiViewModel.listUiState.collectAsState()
@@ -78,14 +83,23 @@ fun AppRoot(
         reloadDialogVisible = true
         reloadDone = 0
         reloadTotal = 0
-        scope.launch(Dispatchers.IO) {
-            ItemSyncManager(wikiDao, ItemJsonParser(context)).reload { done, total ->
-                scope.launch(Dispatchers.Main) {
-                    reloadDone = done
-                    reloadTotal = total
+        reloadFailed = false
+        scope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    ItemSyncManager(wikiDatabase, ItemJsonParser(context)).reload { done, total ->
+                        scope.launch {
+                            reloadDone = done
+                            reloadTotal = total
+                        }
+                    }
                 }
-            }
-            scope.launch(Dispatchers.Main) {
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e("WikiReload", "Wiki重载失败，已保留原有数据", e)
+                reloadFailed = true
+            } finally {
                 reloadInProgress = false
             }
         }
@@ -140,7 +154,7 @@ fun AppRoot(
                             LinearProgressIndicator(progress = { progressValue })
                         }
                     } else {
-                        Text(appString(context, language, R.string.db_reload_success))
+                        Text(appString(context, language, if (reloadFailed) R.string.db_reload_failed else R.string.db_reload_success))
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.example.madodict
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,6 +18,7 @@ import com.example.madodict.ui.theme.MadoDictTheme
 import com.example.madodict.wiki.data.db.WikiDatabase
 import com.example.madodict.wiki.data.json.ItemJsonParser
 import com.example.madodict.wiki.data.sync.ItemSyncManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -59,16 +61,20 @@ private fun ComponentActivity.syncWiki(DataStore: AppDataStore) {
         .longVersionCode.toInt()
 
     lifecycleScope.launch(Dispatchers.IO) {
-        val lastSyncedVersion = DataStore.lastSyncedVersionFlow.first()
+        try {
+            val lastSyncedVersion = DataStore.lastSyncedVersionFlow.first()
+            if (currentVersion != lastSyncedVersion) {
+                val database = WikiDatabase.getInstance(applicationContext)
+                val parser = ItemJsonParser(applicationContext)
+                ItemSyncManager(database, parser).sync()
 
-        // 只有版本号变化时才同步（必然触发）
-        if (currentVersion != lastSyncedVersion) {
-            val dao = WikiDatabase.getInstance(applicationContext).encyclopediaDao()
-            val parser = ItemJsonParser(applicationContext)
-            ItemSyncManager(dao, parser).sync()
-
-            // 同步完成后记录当前版本号
-            DataStore.setLastSyncedVersion(currentVersion)
+                // 解析及数据库事务全部成功后才记录版本，失败时下次启动仍会重试。
+                DataStore.setLastSyncedVersion(currentVersion)
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e("WikiSync", "Wiki同步失败，未记录同步版本", e)
         }
     }
 }

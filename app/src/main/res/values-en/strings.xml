@@ -66,4 +66,5 @@
     <string name="wiki_category_witch">Witch</string>
     <string name="wiki_category_entry">Entry</string>
     <string name="wiki_category_general_entry">General entry</string>
+    <string name="db_reload_failed">Reload failed. Existing entries have been preserved. Please try again.</string>
 </resources>
