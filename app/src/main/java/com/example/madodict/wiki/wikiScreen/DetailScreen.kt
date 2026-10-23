@@ -29,10 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,8 +64,6 @@ fun DetailScreen(
     val categoryColor = Color(category.colorArgb)
 
     val context = LocalContext.current
-
-    var selectedLanguage by remember { mutableStateOf(language) }
 
     Scaffold(
         bottomBar = {
@@ -126,7 +121,7 @@ fun DetailScreen(
                             ) {
                                 AssetImage(
                                     assetPath = item.imagePath,
-                                    selectedLanguage
+                                    language
                                 )
                             }
                         }
@@ -157,7 +152,7 @@ fun DetailScreen(
 
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = category.detailLabel,
+                                        text = appString(context, language, category.detailLabelRes),
                                         style = PageBodyText.copy(fontSize = 12.sp),
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )

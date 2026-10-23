@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +68,7 @@ fun ListScreen(
 ) {
     val context = LocalContext.current
 
-    var selectedLanguage by rememberSaveable { mutableStateOf(language) }
+    val selectedLanguage = language
 
     val finalSearchCondition: String = when {
         isAllResults || searchKeyword.isBlank() -> {
@@ -165,7 +164,7 @@ fun ListScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
 
-                        val filterLabel = currentFilter?.label
+                        val filterLabel = currentFilter?.let { appString(context, selectedLanguage, it.labelRes) }
                             ?: appString(context, selectedLanguage, R.string.filter)
 
                         Text(
@@ -180,7 +179,7 @@ fun ListScreen(
                         onDismissRequest = { filterMenuExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("默认") },
+                            text = { Text(appString(context, selectedLanguage, R.string.wiki_filter_default)) },
                             onClick = {
                                 onFilterChange(null)
                                 filterMenuExpanded = false
@@ -196,7 +195,7 @@ fun ListScreen(
                                             .background(Color(category.colorArgb), shape = CircleShape)
                                     )
                                 },
-                                text = { Text(category.label) },
+                                text = { Text(appString(context, selectedLanguage, category.labelRes)) },
                                 onClick = {
                                     onFilterChange(category)
                                     filterMenuExpanded = false
